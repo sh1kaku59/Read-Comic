@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Web Đọc Truyện Tranh</title>
+    <link rel="icon" type="png" href="comic.png">
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Truyện Tranh</h1>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="comic-name" placeholder="Nhập tên truyện">
+            <input type="text" id="comic-author" placeholder="Nhập tên tác giả">
+            <button id="search-btn">Tìm kiếm</button>
+        </div>
+        <div class="auth-links">
+            <button id="login-btn">Đăng Nhập</button>
+            <button id="signup-btn">Đăng Ký</button>
+            <button id="profile-btn">Hồ Sơ</button>
+            <button id="logout-btn" style="display:none;">Đăng Xuất</button>
+        </div>
+    </header>
+
+    <section class="filters">
+        <label for="sort-select">Sắp xếp theo:</label>
+        <select id="sort-select">
+            <option value="name">Tên (A - Z)</option>
+            <option value="release">Thời gian phát hành</option>
+        </select>
+
+        <label for="category-select">Thể loại:</label>
+        <select id="category-select">
+            <option value="all">Tất cả</option>
+            <option value="1">Hành động</option>
+            <option value="2">Phiêu Lưu</option>
+            <option value="3">Hài hước</option>
+            <option value="4">Lãng Mạng</option>
+            <option value="5">Bí Ẩn và Hành Động</option>
+        </select>
+    </section>
+
+    <section id="comics-list">
+        <!-- Danh sách truyện sẽ được hiển thị ở đây -->
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Trang Web Đọc Truyện Tranh</p>
+    </footer>
+
+    <script>
+        //-------------------------------------------- Kiểm tra trạng thái đăng nhập --------------------------------------------//
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('signup-btn').style.display = 'none';
+                document.getElementById('profile-btn').style.display = 'inline-block';
+                document.getElementById('logout-btn').style.display = 'inline-block';
+            } else {
+                document.getElementById('login-btn').style.display = 'inline-block';
+                document.getElementById('signup-btn').style.display = 'inline-block';
+                document.getElementById('profile-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'none';
+            }
+        }
+
+        //-------------------------------------------- Đăng Nhập/Đăng Ký --------------------------------------------//
+        document.getElementById('login-btn').addEventListener('click', function() {
+            window.location.href = '/login-sigin.html'; // Chuyển hướng đến trang đăng nhập
+        });
+
+        //-------------------------------------------- Hồ Sơ (chỉ vào khi đã đăng nhập) --------------------------------------------//
+        document.getElementById('profile-btn').addEventListener('click', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                window.location.href = '/profile.html'; // Chuyển hướng đến trang hồ sơ
+            } else {
+                alert('Bạn cần đăng nhập để truy cập hồ sơ.');
+                window.location.href = '/login-sigin.html'; // Chuyển hướng đến trang đăng nhập
+            }
+        });
+
+        //-------------------------------------------- Đăng Xuất --------------------------------------------//
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            localStorage.removeItem('isLoggedIn'); // Xóa trạng thái đăng nhập
+            checkLoginStatus(); // Cập nhật giao diện
+            alert('Bạn đã đăng xuất thành công.');
+            window.location.reload(); // Tải lại trang để cập nhật trạng thái
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Kiểm tra nếu người dùng đã đăng nhập
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const profileBtn = document.getElementById('profile-btn');
+            const existingLogoutBtn = document.getElementById('logout-btn'); // Tìm nút logout nếu đã có
+            
+            // Kiểm tra trạng thái đăng nhập
+            if (isLoggedIn) {
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                profileBtn.style.display = 'block';
+                existingLogoutBtn.style.display = 'block';
+            } else {
+                profileBtn.style.display = 'none';
+                existingLogoutBtn.style.display = 'none';
+            }
+        });
+
+        //-------------------------------------------- Sau khi Đăng Nhập thành công --------------------------------------------//
+        function loginSuccess() {
+            localStorage.setItem('isLoggedIn', 'true');
+            checkLoginStatus();
+        }
+
+        // Kiểm tra trạng thái đăng nhập khi tải trang
+        checkLoginStatus();
+
+        //-------------------------------------------- Tìm kiếm truyện --------------------------------------------//
+        document.getElementById('search-btn').addEventListener('click', function () {
+            let name = document.getElementById('comic-name').value;   // Lấy giá trị tên truyện
+            let author = document.getElementById('comic-author').value; // Lấy giá trị tên tác giả
+
+            // Nếu người dùng điền tên truyện hoặc tác giả, gọi hàm tìm kiếm
+            if (name || author) {
+                let query = `/api/search_comics?name=${encodeURIComponent(name)}&author=${encodeURIComponent(author)}`;
+                fetchComics(query);
+            } else {
+                // Nếu không điền, hiển thị lại tất cả truyện
+                fetchComics('/api/comics');
+            }
+        });
+        
+        //-------------------------------------------- Hàm fetch dữ liệu từ API --------------------------------------------//
+        function fetchComics(query) {
+            fetch(query)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Kết quả tìm kiếm:', data);
+                    
+                    // Xóa nội dung hiện tại của danh sách truyện
+                    const comicsList = document.getElementById('comics-list');
+                    comicsList.innerHTML = ''; // Xóa các truyện trước đó
+                    
+                    // Lặp qua dữ liệu truyện và tạo các mục hiển thị
+                    data.forEach(comic => {
+                        const comicItem = `
+                            <div class="comic-item">
+                                <img src="${comic.hinhanh}" alt="${comic.tentruyen}">
+                                <div class="comic-title">${comic.tentruyen}</div>
+                                <div class="comic-author">${comic.tacgia}</div>
+                            </div>
+                        `;
+                        
+                        // Thêm mục truyện vào danh sách truyện
+                        comicsList.innerHTML += comicItem; 
+                    });
+                })
+                .catch(err => {
+                    console.error('Lỗi tìm kiếm:', err);
+                });
+        }
+
+        // Gọi fetchComics để hiển thị tất cả truyện khi tải trang
+        fetchComics('/api/comics');
+
+        //-------------------------------------------- Xử lý sắp xếp --------------------------------------------//
+        document.getElementById('sort-select').addEventListener('change', function() {
+            let sortOption = this.value;
+            let category = document.getElementById('category-select').value;
+            let query = `/api/comics?sortOption=${sortOption}&category=${category}`;
+            fetchComics(query);
+        });
+
+        //-------------------------------------------- Xử lý lọc theo thể loại --------------------------------------------//
+        document.getElementById('category-select').addEventListener('change', function() {
+            let category = this.value;
+            let sortOption = document.getElementById('sort-select').value;
+            let query = `/api/comics?sortOption=${sortOption}&category=${category}`;
+            fetchComics(query);
+        });
+
+        // Lấy thể loại khi tải trang
+        fetchCategories();
+    </script>
+</body>
+</html>

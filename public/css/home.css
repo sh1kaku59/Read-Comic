@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #303f9f;
+    color: white;
+}
+.search-bar input {
+    padding: 5px;
+    margin-right: 10px;
+}
+.filters {
+    margin: 20px;
+    text-align: center;
+}
+#comics-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #303f9f;
+    color: white;
+}
+
+/* CSS cho truyện */
+#comics-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 truyện trên mỗi hàng */
+    grid-gap: 20px; /* Khoảng cách giữa các truyện */
+    padding: 20px;
+}
+
+.comic-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.comic-item img {
+    width: 100%;
+    height: auto;
+    max-height: 200px; /* Giới hạn chiều cao của ảnh */
+    object-fit: cover;
+}
+
+.comic-title {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.comic-author {
+    font-size: 1em;
+    color: #777;
+}
