@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" type="png" href="logo.png">
+    <link rel="stylesheet" href="login-sigin.css">
+    <title>Read Comic</title>
+</head>
+
+<body>
+    <div class="bg"></div>
+    
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="ring">
+        <i style="--clr:#00ff0a;"></i>
+        <i style="--clr:#ff0057;"></i>
+        <i style="--clr:#fffd44;"></i>
+        <div class="backhome">
+            <a href="home.html">
+                <img src="img/logo.png" alt="Home Logo">
+            </a>
+        </div>        
+    </div>
+    
+    <div class="container">
+        <div class="signup-section">
+            <header>Signup</header>
+
+            <div class="social-buttons">
+                <button><i class='bx bxl-google'></i> Use Google</button>
+                <button><i class='bx bxl-apple'></i> Use Apple</button>
+            </div>
+
+            <div class="separator">
+                <div class="line"></div>
+                <p>Or</p>
+                <div class="line"></div>
+            </div>
+
+            <!-- FORM ĐĂNG KÝ -->
+            <form id="signupForm">
+                <input type="text" name="username" placeholder="Account" required>
+                <div class="password-field">
+                    <input type="password" name="password" placeholder="Password" required>
+                    <i class='bx bx-hide' id="toggleSignupPassword"></i>
+                </div>
+                <button type="submit" class="btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    Signup
+                </button>
+            </form>          
+
+        </div>
+
+        <div class="login-section">
+            <header>Login</header>
+
+            <div class="social-buttons">
+                <button><i class='bx bxl-google'></i> Use Google</button>
+                <button><i class='bx bxl-apple'></i> Use Apple</button>
+            </div>
+
+            <div class="separator">
+                <div class="line"></div>
+                <p>Or</p>
+                <div class="line"></div>
+            </div>
+
+            <!-- FORM ĐĂNG NHẬP -->
+            <form id="loginForm">
+                <input type="text" name="username" placeholder="Account" required>
+                <div class="password-field">
+                    <input type="password" name="password" placeholder="Password" required>
+                    <i class='bx bx-hide' id="toggleLoginPassword"></i>
+                </div>
+                <button type="submit" class="btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    Login
+                </button>
+            </form>        
+
+        </div>
+
+    </div>
+
+    <script>
+        //------------------------------------------------design------------------------------------------//
+        const container = document.querySelector('.container');
+        const btn = document.querySelector('.btn');
+        const signupButton = document.querySelector('.signup-section header');
+        const loginButton = document.querySelector('.login-section header');
+        const backgroundDiv = document.querySelector('.bg');
+        const shapes = document.querySelectorAll('.background .shape');
+        const toggleSignupPassword = document.querySelector('#toggleSignupPassword');
+        const toggleLoginPassword = document.querySelector('#toggleLoginPassword');
+        const originalColors = [
+            'linear-gradient(#1845ad, #23a2f6)', 
+            'linear-gradient(to right, #ff512f, #f09819)' 
+        ];
+
+        loginButton.addEventListener('click', () => {
+            container.classList.add('active');
+            changeBackground('img/background.gif'); 
+            shapes.forEach((shape, index) => {
+                const translateX = index === 0 ? '450px' : '-400px'; 
+                const translateY = index === 0 ? '250px' : '-80px'; 
+                shape.style.transform = `translate(${translateX}, ${translateY})`;
+                setTimeout(() => {
+                    shape.style.background = originalColors[1 - index]; 
+                }, 300);
+            });
+        });
+
+        signupButton.addEventListener('click', () => {
+            container.classList.remove('active');
+            changeBackground('img/bg.gif'); 
+
+            shapes.forEach((shape) => {
+                shape.style.transform = 'translate(0, 0)'; 
+                setTimeout(() => {
+                    shape.style.background = originalColors[index]; 
+                }, 300); 
+            });
+        });
+
+        toggleSignupPassword.addEventListener('click', () => {
+            const passwordInput = toggleSignupPassword.previousElementSibling;
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleSignupPassword.classList.remove('bx-hide');
+                toggleSignupPassword.classList.add('bx-show');
+            } else {
+                passwordInput.type = 'password';
+                toggleSignupPassword.classList.remove('bx-show');
+                toggleSignupPassword.classList.add('bx-hide');
+            }
+        });
+
+        toggleLoginPassword.addEventListener('click', () => {
+            const passwordInput = toggleLoginPassword.previousElementSibling;
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleLoginPassword.classList.remove('bx-hide');
+                toggleLoginPassword.classList.add('bx-show');
+            } else {
+                passwordInput.type = 'password';
+                toggleLoginPassword.classList.remove('bx-show');
+                toggleLoginPassword.classList.add('bx-hide');
+            }
+        });
+
+        btn.addEventListener('click', () => {
+            btn.innerHTML = `<i class='bx bx-loader-circle bx-spin'></i> Loading...`; 
+            setTimeout(() => {
+                btn.innerHTML = 'Try again'; 
+            }, 2000);
+        });
+
+        //---------------------------------------- Background --------------------------------------//
+        function changeBackground(imageUrl) {
+            backgroundDiv.style.opacity = '0'; 
+            setTimeout(() => {
+                backgroundDiv.style.backgroundImage = `url('${imageUrl}')`;
+                backgroundDiv.style.opacity = '1'; 
+            }, 300); 
+        }
+
+        //-------------------------------------------- Xử lý form đăng nhập//đăng ký --------------------------------------------//
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.querySelector('#loginForm');
+            const signupForm = document.querySelector('#signupForm');
+
+            // Xử lý form đăng nhập
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Ngăn không gửi biểu mẫu theo cách mặc định
+
+                const formData = new FormData(loginForm);
+                const data = {
+                    username: formData.get('username'),
+                    password: formData.get('password')
+                };
+
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.text();
+                    
+                    // Hiển thị thông báo dựa trên kết quả phản hồi
+                    alert(result);
+                    
+                    // Nếu đăng nhập thành công, chuyển hướng đến trang home
+                    if (response.ok && result.includes("Chào Mừng")) {
+                        localStorage.setItem('isLoggedIn', 'true'); // Lưu tên tài khoản vào localStorage
+                        window.location.href = 'home.html';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.');
+                }
+            });
+
+            // Xử lý form đăng ký
+            signupForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                const formData = new FormData(signupForm);
+                const data = {
+                    username: formData.get('username'),
+                    password: formData.get('password')
+                };
+
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.text();
+                    alert(result);
+                    
+                    if (response.ok) {
+                        window.location.href = 'home.html';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

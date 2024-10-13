@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Cá Nhân</title>
+    <link rel="icon" type="png" href="comic.png">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <header>
+        <h1>Account Profile</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#" id="edit-profile-btn">Chỉnh Sửa Hồ Sơ</a></li>
+            <li><a href="#" id="change-password-btn">Thay Đổi Mật Khẩu</a></li>
+            <li><a href="#" id="history-btn">Lịch Sử Truyện Đã Xem</a></li>
+        </ul>
+    </nav>
+
+    <!-- Profile Content Section -->
+    <section id="profile-content">
+        
+    </section>
+
+    <script>
+        //const currentUser = localStorage.getItem('currentUser');
+        
+        //---------------------------------------------- Load Chỉnh Sửa Hồ Sơ ----------------------------------------------//
+        document.getElementById('edit-profile-btn').addEventListener('click', function() {
+            fetch(`/api/profile`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById('profile-content').innerHTML = `
+                        <h2>Thêm Thông Tin Khách Hàng</h2>
+                        <form id="edit-profile-form" enctype="multipart/form-data">
+                            <label for="tenkh">Tên khách hàng:</label>
+                            <input type="text" id="tenkh" name="tenkh" required>
+
+                            <label for="ngaysinh">Ngày sinh:</label>
+                            <input type="date" id="ngaysinh" name="ngaysinh">
+
+                            <label for="gioitinh">Giới tính:</label>
+                            <select id="gioitinh" name="gioitinh">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+
+                            <label for="avatar">Avatar:</label>
+                            <input type="file" id="avatar" name="avatar" accept="image/*">
+                            <img id="avatar-preview" src="/img/default-avatar.png" alt="Avatar hiện tại" style="max-width: 150px; max-height: 150px;">
+                            
+                            <button type="submit">Lưu Thay Đổi</button>
+                        </form>`;
+                } else {
+                    // Hiển thị thông tin khách hàng lên form
+                    document.getElementById('profile-content').innerHTML = `
+                        <h2>Chỉnh Sửa Hồ Sơ</h2>
+                        <form id="edit-profile-form" enctype="multipart/form-data">
+                            <label for="tenkh">Tên khách hàng:</label>
+                            <input type="text" id="tenkh" name="tenkh" value="${data.tenkh || ''}">
+
+                            <label for="ngaysinh">Ngày sinh:</label>
+                            <input type="date" id="ngaysinh" name="ngaysinh" value="${data.ngaysinh ? new Date(data.ngaysinh).toISOString().substr(0, 10) : ''}">
+
+                            <label for="gioitinh">Giới tính:</label>
+                            <select id="gioitinh" name="gioitinh">
+                                <option value="Nam" ${data.gioitinh === 'Nam' ? 'selected' : ''}>Nam</option>
+                                <option value="Nữ" ${data.gioitinh === 'Nữ' ? 'selected' : ''}>Nữ</option>
+                                <option value="Khác" ${data.gioitinh === 'Khác' ? 'selected' : ''}>Khác</option>
+                            </select>
+
+                            <label for="avatar">Avatar:</label>
+                            <input type="file" id="avatar" name="avatar" accept="image/*">
+                            <img id="avatar-preview" src="${data.avatar || '/img/default-avatar.png'}" alt="Avatar hiện tại" style="max-width: 150px; max-height: 150px;">
+                            
+                            <button type="submit">Lưu Thay Đổi</button>
+                        </form>`;
+                }
+
+                // Preview hình ảnh avatar khi người dùng chọn file mới
+                document.getElementById('avatar').addEventListener('change', function(event) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('avatar-preview').src = e.target.result;
+                    }
+                    reader.readAsDataURL(event.target.files[0]);
+                });
+
+                // Gửi form để cập nhật thông tin
+                document.getElementById('edit-profile-form').addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    const formData = new FormData();
+
+                    // Xử lý và thêm từng giá trị vào formData theo điều kiện
+                    const tenkhInput = document.getElementById('tenkh').value.trim();
+                    const ngaysinhInput = document.getElementById('ngaysinh').value.trim();
+                    const gioitinhInput = document.getElementById('gioitinh').value;
+                    const avatarInput = document.getElementById('avatar').files[0];
+
+                    formData.append('tenkh', tenkhInput ? tenkhInput : null);
+                    formData.append('ngaysinh', ngaysinhInput ? ngaysinhInput : null);
+                    formData.append('gioitinh', gioitinhInput ? gioitinhInput : null);
+
+                    if (avatarInput) {
+                        formData.append('avatar', avatarInput);
+                    }
+
+                    try {
+                        const updateResponse = await fetch(`/api/update-customer-profile`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!updateResponse.ok) throw new Error('Failed to update profile');
+                        alert('Cập nhật thông tin thành công');
+                    } catch (error) {
+                        console.error('Error updating customer info:', error);
+                        alert('Lỗi cập nhật thông tin');
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading customer data:', error);
+                alert('Lỗi khi tải thông tin khách hàng');
+            });
+        });
+
+        //---------------------------------------------- Load Thay Đổi Mật Khẩu ----------------------------------------------//
+        document.getElementById('change-password-btn').addEventListener('click', function() {
+            document.getElementById('profile-content').innerHTML = `
+                <h2>Thay Đổi Mật Khẩu</h2>
+                <form id="change-password-form">
+                    <label for="current-password">Mật khẩu hiện tại:</label>
+                    <input type="password" id="current-password" name="currentPassword" required>
+
+                    <label for="new-password">Mật khẩu mới:</label>
+                    <input type="password" id="new-password" name="newPassword" required>
+
+                    <label for="confirm-password">Nhập lại mật khẩu mới:</label>
+                    <input type="password" id="confirm-password" name="confirmPassword" required>
+
+                    <button type="submit">Đổi Mật Khẩu</button>
+                </form>
+            `;
+
+            // Xử lý form thay đổi mật khẩu
+            document.getElementById('change-password-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (newPassword !== confirmPassword) {
+                    alert('Mật khẩu mới và mật khẩu xác nhận không khớp.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/change-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ currentPassword, newPassword })
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.message);
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error changing password:', error);
+                    alert('Lỗi khi đổi mật khẩu.');
+                }
+            });
+        });
+
+        //----------------------------------------------- Load Lịch Sử Truyện Đã Xem ------------------------------------------//
+        document.getElementById('history-btn').addEventListener('click', function() {
+            document.getElementById('profile-content').innerHTML = `
+                <h2>Lịch Sử Truyện Đã Xem</h2>
+                <ul id="history-list">
+                    <!-- Lịch sử truyện sẽ được hiển thị ở đây -->
+                </ul>
+            `;
+
+            // Giả sử có hàm fetchHistory để lấy lịch sử từ API
+            fetch('/api/comic_history')
+                .then(response => response.json())
+                .then(data => {
+                    const historyList = document.getElementById('history-list');
+                    historyList.innerHTML = '';
+                    data.forEach(item => {
+                        const listItem = `<li>${item.comic_name} - Lần cuối đọc: ${item.last_read}</li>`;
+                        historyList.innerHTML += listItem;
+                    });
+                });
+        });
+    </script>
+</body>
+</html>
