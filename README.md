@@ -1,10 +1,17 @@
 # Read-Comic
 Create 1 online comic book reading website
 
-------------------------------------- Home page ----------------------------------------
+------------------------------------- Home page -------------------------------------------------
 ![image](https://github.com/user-attachments/assets/8bb2e82b-4935-4dc6-be3d-c13b00464068)
-------------------------------------- sign up/login page ----------------------------------------
+------------------------------------- Function Find Comic -----------------------------------------------
+![image](https://github.com/user-attachments/assets/50fe8e4e-3399-401c-b4c9-a073f8c4b8a6)
+------------------------------------- Function Sortby Comic -----------------------------------------------
+![image](https://github.com/user-attachments/assets/145b98f4-c1b7-44a8-937e-d1c95e5782d8)
+------------------------------------- Function Genre Comic -----------------------------------------------
+![image](https://github.com/user-attachments/assets/5a498a66-c03b-423c-8472-be0c612dfdde)
+------------------------------------- Function Show All List Of Comic ------------------------------------
+![image](https://github.com/user-attachments/assets/8d2c4883-a67d-4d11-83b0-2be61d742a14)
+------------------------------------- sign up/login page ------------------------------------------------
 ![image](https://github.com/user-attachments/assets/7f2299e8-0377-4dee-9a00-005bbc1fec1f)
 ------------------------------------- Account Profile page ----------------------------------------
-![image](https://github.com/user-attachments/assets/972af340-003a-4520-8b0f-cb05aea522ca)
-![image](https://github.com/user-attachments/assets/7ab4ee2e-8887-4090-815c-3da1c09129ae)
+
