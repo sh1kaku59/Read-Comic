@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Cá Nhân</title>
+    <link rel="icon" type="png" href="logo.png">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <a href="home.html" class="back-to-home">
+            <i class="fas fa-arrow-left"></i>
+            <span class="home-text">Homepage</span>
+        </a>
+        <h1>Account Profile</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#" id="edit-profile-btn">Profile Manager</a></li>
+            <li><a href="#" id="change-password-btn">Password Manager</a></li>
+            <li><a href="#" id="history-btn">History Comic</a></li>
+            <li><a href="#" id="upload-comic-btn">Upload Comic</a></li>
+        </ul>
+    </nav>
+
+    <!-- Profile Content Section -->
+    <section id="profile-content">
+        
+    </section>
+
+    <script>
+        //---Directed when access---//
+        window.onload = function() {
+            // Simulate a click on the "Profile Management" link to load that section by default
+            document.getElementById('edit-profile-btn').click();
+        };
+
+        //---------------------------------------------- Load Chỉnh Sửa Hồ Sơ ----------------------------------------------//
+        document.getElementById('edit-profile-btn').addEventListener('click', function() {
+            fetch(`/api/profile`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById('profile-content').innerHTML = `
+                        <div id="edit-profile-page">
+                            <div class="add-header">
+                                <h2>Add Account Information</h2>
+                            </div>
+
+                            <form id="edit-profile-form" enctype="multipart/form-data">
+                                <label for="tenkh">Username:</label>
+                                <input type="text" id="tenkh" name="tenkh" required>
+
+                                <hr>
+
+                                <label for="ngaysinh">Date of Birth:</label>
+                                <input type="date" id="ngaysinh" name="ngaysinh">
+
+                                <hr>
+
+                                <label for="gioitinh">Gender:</label>
+                                <select id="gioitinh" name="gioitinh">
+                                    <option value="Nam">Male</option>
+                                    <option value="Nữ">Female</option>
+                                    <option value="Khác">Other</option>
+                                </select>
+
+                                <hr>
+
+                                <button type="submit" class="sub-btn"><span class="btn-text">Save Change</span></button>
+                                <button type="button" id="delete-account-btn">Disable Account</button>
+
+                            </form>
+                        </div>
+
+                        <div class="avatar-section">
+                            <h2>Avatar</h2>
+                            <label for="avatar" class="plus">
+                                <input type="file" id="avatar" name="avatar" accept="image/*">
+                                <span class="sign">+</span>
+                            </label>
+                            <img id="avatar-preview" src="/img/default-avatar.png" alt="Current Avatar">
+                        </div>
+                            `;
+                } else {
+                    // Hiển thị thông tin khách hàng lên form
+                    document.getElementById('profile-content').innerHTML = `
+                        <div class="edit-profile-container"}>
+                            <div class="avatar-container">
+                                <img id="ava-preview" src="${data.avatar || '/img/default-avatar.png'}" alt="Current Avatar">
+                                <label for="avatar" class="upload-btn">
+                                    <input type="file" id="avatar" name="avatar" accept="image/*" class="unique-input">
+                                    <span class="plus-sign">+</span>
+                                </label> 
+                            </div>
+
+                            <form id="edit-profile-form" class="unique-form" enctype="multipart/form-data">
+                                <label for="tenkh">Username:</label>
+                                <input type="text" id="tenkh" name="tenkh" value="${data.tenkh || ''}" class="unique-input">
+
+                                <label for="ngaysinh">Date of Birth:</label>
+                                <input type="date" id="ngaysinh" name="ngaysinh" value="${data.ngaysinh ? new Date(data.ngaysinh).toISOString().substr(0, 10) : ''}" class="unique-input">
+
+                                <label for="gioitinh">Gender:</label>
+                                <select id="gioitinh" name="gioitinh" class="unique-input">
+                                    <option value="Nam" ${data.gioitinh === 'Nam' ? 'selected' : ''}>Male</option>
+                                    <option value="Nữ" ${data.gioitinh === 'Nữ' ? 'selected' : ''}>Female</option>
+                                    <option value="Khác" ${data.gioitinh === 'Khác' ? 'selected' : ''}>Other</option>
+                                </select>
+
+                                <button type="submit" class="unique-btn">
+                                    Save Change
+                                    <div class="button__horizontal"></div>
+                                    <div class="button__vertical"></div>
+                                </button>
+                                
+                                <div id="color" value="${data.color || ''}" class="change-bg-btn">
+                                    <i class="fas fa-sync-alt"></i>
+                                </div>
+
+                                <button type="button" id="delete-account-btn">Disable Account</button>
+                            </form>
+                        </div>
+                            `;
+                }
+
+                // Change card's background color (sql)
+                const gradients = [
+                    'linear-gradient(to top right, #2E3192be, #1BFFFFbe)',
+                    'linear-gradient(to top right, #D4145Abe, #FBB03Bbe)',
+                    'linear-gradient(to top right, #009245be, #FCEE21be)',
+                    'linear-gradient(to top right, #662D8Cbe, #ED1E79be)',
+                    'linear-gradient(to top right, #EE9CA7be, #FFDDE1be)',
+                    'linear-gradient(to top right, #614385be, #516395be)',
+                    'linear-gradient(to top right, #02AABDbe, #00CDACbe)',
+                    'linear-gradient(to top right, #FF512Fbe, #DD2476be)',
+                    'linear-gradient(to top right, #FF5F6Dbe, #FFC371be)',
+                    'linear-gradient(to top right, #11998Ebe, #38EF7Dbe)',
+                    'linear-gradient(to top right, #C6EA8Dbe, #FE90AFbe)',
+                    'linear-gradient(to top right, #EA8D8Dbe, #A890FEbe)',
+                    'linear-gradient(to top right, #D8B5FFbe, #1EAE98be)',
+                    'linear-gradient(to top right, #FF61D2be, #FE9090be)',
+                    'linear-gradient(to top right, #BFF098be, #6FD6FFbe)',
+                    'linear-gradient(to top right, #4E65FFbe, #92EFFDbe)',
+                    'linear-gradient(to top right, #A9F1DFbe, #FFBBBBbe)',
+                    'linear-gradient(to top right, #C33764be, #1D2671be)',
+                    'linear-gradient(to top right, #93A5CFbe, #E4EfE9be)',
+                    'linear-gradient(to top right, #868F96be, #596164be)',
+                    'linear-gradient(to top right, #09203Fbe, #537895be)',
+                    'linear-gradient(to top right, #FFECD2be, #FCB69Fbe)',
+                    'linear-gradient(to top right, #A1C4FDbe, #C2E9FBbe)',
+                    'linear-gradient(to top right, #764BA2be, #667EEAbe)',
+                    'linear-gradient(to top right, #FDFCFBbe, #E2D1C3be)',
+                    'linear-gradient(to top right, #E2D1C300, #E2D1C300)',
+                ];
+
+                let selectedGradient = data.color;
+                // Kiểm tra xem màu có trong gradients không
+                if (gradients.includes(selectedGradient)) {
+                    document.querySelector('.edit-profile-container').style.background = selectedGradient;
+                }
+
+                // Preview hình ảnh avatar khi người dùng chọn file mới (add,update)
+                function previewAvatar(inputId, previewId) {
+                    document.getElementById(inputId).addEventListener('change', function(event) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            document.getElementById(previewId).src = e.target.result;
+                        };
+                        reader.readAsDataURL(event.target.files[0]);
+                    });
+                }
+
+                // Sử dụng hàm previewAvatar cho hai trường hợp
+                previewAvatar('avatar', 'ava-preview');
+                previewAvatar('avatar', 'avatar-preview');
+
+
+                // Gửi form để cập nhật thông tin
+                document.getElementById('edit-profile-form').addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    const formData = new FormData();
+
+                    // Xử lý và thêm từng giá trị vào formData theo điều kiện
+                    const tenkhInput = document.getElementById('tenkh').value.trim();
+                    const ngaysinhInput = document.getElementById('ngaysinh').value.trim();
+                    const gioitinhInput = document.getElementById('gioitinh').value;
+                    const avatarInput = document.getElementById('avatar').files[0];
+                    const colorInput = selectedGradient ? selectedGradient : null;
+
+                    formData.append('tenkh', tenkhInput ? tenkhInput : null);
+                    formData.append('ngaysinh', ngaysinhInput ? ngaysinhInput : null);
+                    formData.append('gioitinh', gioitinhInput ? gioitinhInput : null);
+                    formData.append('color', colorInput ? colorInput : null);
+
+                    if (avatarInput) {
+                        formData.append('avatar', avatarInput);
+                    }
+
+                    try {
+                        const updateResponse = await fetch(`/api/update-customer-profile`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!updateResponse.ok) throw new Error('Failed to update profile');
+                        alert('Update Success Profile');
+                        location.reload();
+                    } catch (error) {
+                        console.error('Error updating customer info:', error);
+                        alert('Lỗi cập nhật thông tin');
+                    }
+                });
+
+                // Xử lý yêu cầu hủy tài khoản
+                document.getElementById('delete-account-btn').addEventListener('click', function() {
+                    if (confirm('Bạn có chắc chắn muốn hủy tài khoản không?')) {
+                        // Gửi yêu cầu đến server để hủy tài khoản
+                        fetch(`/api/delete-account`, {
+                            method: 'POST'
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(data.message);
+                                // Chuyển hướng về trang chủ
+                                window.location.href = '/';
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Lỗi khi hủy tài khoản:', error);
+                            alert('Có lỗi xảy ra khi hủy tài khoản.');
+                        });
+                    }
+                });
+
+                const changeBgButton = document.getElementById('color');
+                const editProfileContainer = document.querySelector('.edit-profile-container');
+
+                // Xử lý sự kiện khi người dùng chọn màu mới
+                changeBgButton.addEventListener('click', () => {
+                    const randomIndex = Math.floor(Math.random() * gradients.length);
+                    selectedGradient = gradients[randomIndex]; // Lưu lại màu gradient đã chọn
+                    editProfileContainer.style.background = selectedGradient;
+                });
+            })
+            .catch(error => {
+                console.error('Error loading customer data:', error);
+                alert('Lỗi khi tải thông tin khách hàng');
+            });
+        });
+
+        //---------------------------------------------- Load Thay Đổi Mật Khẩu ----------------------------------------------//
+        document.getElementById('change-password-btn').addEventListener('click', function() {
+            document.getElementById('profile-content').innerHTML = `
+            <div class="password-container">
+                <img id="pass" src="/img/pass.png">
+
+                <!-- Reset Password Form -->
+                <div class="password-card" id="reset-password-card">
+                    <h2>Reset Password</h2>
+                    <form id="change-password-form">
+                        <div class="input-container">
+                            <input type="password" id="current-password" name="currentPassword" required>
+                            <label for="current-password">Current Password</label>
+                            <span class="toggle-password">
+                                <i class="fas fa-eye" onclick="togglePassword('current-password', this)"></i>
+                            </span>
+                        </div>
+                        <div class="input-container">
+                            <input type="password" id="new-password" name="newPassword" required>
+                            <label for="new-password">New Password</label>
+                            <span class="toggle-password">
+                                <i class="fas fa-eye" onclick="togglePassword('new-password', this)"></i>
+                            </span>
+                        </div>
+                        <div class="input-container">
+                            <input type="password" id="confirm-password" name="confirmPassword" required>
+                            <label for="confirm-password">Confirm New Password</label>
+                            <span class="toggle-password">
+                                <i class="fas fa-eye" onclick="togglePassword('confirm-password', this)"></i>
+                            </span>
+                        </div>
+                        <button type="submit" class="pass-btn" id="password-save-btn">Save Change</button>
+                    </form>
+                    <p class="toggle-link"><a href="#" onclick="showForgotPassword()">Forgot Password?</a></p>
+                </div>
+
+                <!-- Forgot Password Form -->
+                <div class="password-card" id="forgot-password-card" style="display: none;">
+                    
+                    <h3>Forget Password? Don't Worry.</h3>
+                    <img id="forgot" src="/img/forgot.png">
+                    <p>Please enter the email address. We will send you a random 6 numbers password for you to reset your password.</p>
+                    <form id="forgot-password-form">
+                        <div class="mail-container">
+                            <input type="email" id="email" name="email" required>
+                            <label for="email">Email Address</label>
+                        </div>
+                        <button type="submit" class="pass-btn" id="password-reset-btn">Send Reset Link</button>
+                    </form>
+                    <p class="toggle-link"><a href="#" onclick="showResetPassword()">Back to Reset Password</a></p>
+                </div>
+            </div>
+            `;
+
+            // Monkey Animation
+            const image = document.getElementById("pass");
+            const inputs = document.querySelectorAll(".input-container input");
+            const input = document.querySelectorAll(".mail-container input");
+
+            inputs.forEach(input => {
+                input.addEventListener("focus", () => {
+                    image.src = "/img/blind.png"; // Replace with your "focused" image path
+                });
+
+                input.addEventListener("blur", () => {
+                    image.src = "/img/pass.png"; // Restore to the original image
+                });
+            });
+
+            input.forEach(input => {
+                input.addEventListener("focus", () => {
+                    image.src = "/img/hear.png"; // Replace with your "focused" image path
+                });
+
+                input.addEventListener("blur", () => {
+                    image.src = "/img/normal.png"; // Restore to the original image
+                });
+            });
+
+            // Xử lý form thay đổi mật khẩu
+            document.getElementById('change-password-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (newPassword !== confirmPassword) {
+                    alert('Mật khẩu mới và mật khẩu xác nhận không khớp.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/change-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ currentPassword, newPassword })
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.message);
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error changing password:', error);
+                    alert('Lỗi khi đổi mật khẩu.');
+                }
+            });
+        });
+
+        // Forget Pass
+        function showForgotPassword() {
+            document.getElementById('reset-password-card').style.display = 'none';
+            document.getElementById('forgot-password-card').style.display = 'block';
+        }
+
+        function showResetPassword() {
+            document.getElementById('reset-password-card').style.display = 'block';
+            document.getElementById('forgot-password-card').style.display = 'none';
+        }
+
+        // Show/Hide Paswword Eye 
+        function togglePassword(inputId, icon) {
+            var input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        //------------------------------------------------------ Upload Truyện -------------------------------------------------//
+        document.getElementById('upload-comic-btn').addEventListener('click', function () {
+            document.getElementById('profile-content').innerHTML = `
+                <section id="upload-comic-section" class="upload-comic-container">
+                    <h2 class="upload-comic-title">Upload Comics</h2>
+                    <form id="upload-comic-form" class="upload-comic-form" enctype="multipart/form-data">
+
+                        <div class="upload-comic-left">
+                            <div class="upload-comic-field">
+                                <label for="comic-file" class="upload-comic-label">Choose Comic (only accept JPG, JPEG, PNG format file):</label>
+                                <div id="drag-and-drop-area" class="upload-comic-drag-drop">
+                                    <p>Drag and drop your comic file here or click to select</p>
+                                    <i class="fas fa-upload" style="font-size: 30px; vertical-align: middle; margin-top: 10px"></i>
+                                    <input type="file" id="comic-file" name="comicFile" class="upload-comic-file" accept="image/jpeg, image/jpg, image/png" required>
+                                    <img id="preview-image" src="" class="upload-comic-preview" alt="Preview Image" style="display: none; max-width: 200px; margin-top: 10px;">
+                                </div>
+                            </div>    
+                        </div>
+
+                        <div class="upload-comic-middle">
+                            <div class="upload-comic-field">
+                                <label for="comic-title" class="upload-comic-label">Comic title:</label>
+                                <input type="text" id="comic-title" name="comicTitle" class="upload-comic-input" required>
+                            </div>
+
+                            <div class="upload-comic-field">
+                                <hr>
+                                <label for="comic-author" class="upload-comic-label">Author:</label>
+                                <input type="text" id="comic-author" name="comicAuthor" class="upload-comic-input" required>
+                            </div>
+
+                            <div class="upload-comic-field">
+                                <hr>
+                                <label for="category-select" class="upload-comic-label">Genre:</label>
+                                <select id="category-select" class="upload-comic-select styled-select">
+                                    <option value="all">All</option>
+                                    <option value="1">Action</option>
+                                    <option value="2">Adventure</option>
+                                    <option value="3">Comedy</option>
+                                    <option value="4">Romance</option>
+                                    <option value="5">Sci-fi</option>
+                                    <option value="6">Horror</option>
+                                </select>
+                            </div>
+
+                            <div class="upload-comic-field">
+                                <hr>
+                                <label for="comic-status" class="upload-comic-label">Status:</label>
+                                <select id="comic-status" name="comicStatus" class="upload-comic-select" required>
+                                    <option value="Đang viết">In Progress</option>
+                                    <option value="Hoàn thành">Done</option>
+                                </select>
+                            </div>
+
+                            <div class="upload-comic-field">
+                                <hr>
+                                <label for="comic-description" class="upload-comic-label">Description:</label>
+                                <textarea id="comic-description" name="comicDescription" class="upload-comic-textarea" placeholder="Write a brief synopsis of your comic..." required></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-comic-button-container">
+                            <span class="mas">Next to Episode</span>
+                            <button type="submit" class="upload-comic-btn">Upload Comic</button>
+                        </div>
+                    </form>
+                </section>
+            `;
+
+            // Kiểm tra file ảnh và hiển thị ảnh preview trước khi upload
+            document.getElementById('comic-file').addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                const previewImage = document.getElementById('preview-image');
+                
+                // Kiểm tra định dạng file
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Chỉ chấp nhận file có định dạng JPG, JPEG hoặc PNG');
+                    event.target.value = ''; // Reset input file
+                    previewImage.style.display = 'none';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+
+                    img.onload = function () {
+                        // Kiểm tra kích thước ảnh (1077x1077)
+                        if (img.width !== 1077 || img.height !== 1077) {
+                            alert('Kích thước hình ảnh phải là 1077x1077.');
+                            event.target.value = ''; // Reset input file
+                            previewImage.style.display = 'none';
+                            return;
+                        } 
+
+                        // Nếu hợp lệ, hiển thị ảnh preview
+                        previewImage.src = img.src;
+                        previewImage.style.display = 'block';
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Xử lý form upload truyện tranh
+            document.getElementById('upload-comic-form').addEventListener('submit', async function (event) {
+                event.preventDefault();
+                
+                const formData = new FormData();
+                formData.append('comicTitle', document.getElementById('comic-title').value);
+                formData.append('comicAuthor', document.getElementById('comic-author').value);
+                formData.append('comicCategory', document.getElementById('category-select').value);
+                formData.append('comicStatus', document.getElementById('comic-status').value);
+                formData.append('comicDescription', document.getElementById('comic-description').value);
+                formData.append('comicFile', document.getElementById('comic-file').files[0]);
+
+                try {
+                    const response = await fetch('/upload-comic', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        alert('Upload truyện thành công!');
+                        location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra khi upload truyện.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi upload truyện.');
+                }
+            });
+            
+            // Drag and drop file image
+            const dragAndDropArea = document.getElementById('drag-and-drop-area');
+            const fileInput = document.getElementById('comic-file');
+
+            dragAndDropArea.addEventListener('click', () => {
+                fileInput.click(); // Open file dialog on click
+            });
+
+            dragAndDropArea.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Prevent default behavior
+                dragAndDropArea.classList.add('drag-over'); // Optional: add a class to highlight
+            });
+
+            dragAndDropArea.addEventListener('dragleave', () => {
+                dragAndDropArea.classList.remove('drag-over'); // Remove highlight class
+            });
+
+            dragAndDropArea.addEventListener('drop', (e) => {
+                e.preventDefault(); // Prevent default behavior
+                const files = e.dataTransfer.files; // Get the dropped files
+                if (files.length > 0) {
+                    fileInput.files = files; // Assign files to the input
+                    handleFile(files[0]); // Optionally handle the file
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    handleFile(files[0]); // Handle file from input
+                }
+            });
+
+            // Function to handle the selected or dropped file
+            function handleFile(file) {
+                const previewImage = document.getElementById('preview-image');
+                previewImage.src = URL.createObjectURL(file); // Create a URL for the image
+                previewImage.style.display = 'block'; // Show the preview image
+            }
+        });
+
+        //----------------------------------------------- Load Lịch Sử Truyện Đã Xem ------------------------------------------//
+        document.getElementById('history-btn').addEventListener('click', function() {
+            document.getElementById('profile-content').innerHTML = `
+                <h2>Lịch Sử Truyện Đã Xem</h2>
+                <ul id="history-list">
+                    <!-- Lịch sử truyện sẽ được hiển thị ở đây -->
+                </ul>
+            `;
+
+            // Giả sử có hàm fetchHistory để lấy lịch sử từ API
+            fetch('/api/comic_history')
+                .then(response => response.json())
+                .then(data => {
+                    const historyList = document.getElementById('history-list');
+                    historyList.innerHTML = '';
+                    data.forEach(item => {
+                        const listItem = `<li>${item.comic_name} - Lần cuối đọc: ${item.last_read}</li>`;
+                        historyList.innerHTML += listItem;
+                    });
+                });
+        });
+    </script>
+</body>
+</html>
