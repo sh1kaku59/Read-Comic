@@ -7,12 +7,14 @@ The functions on this page:
 1. Search function: Story title and author.
 2. Function to sort stories by option A->Z, Z->A, release date.
 3. Function of selecting the genre of the story.
+   
 ------------------------------------- Sign up and Sign in page ------------------------------------------
 ![image](https://github.com/user-attachments/assets/ef4bf806-dc5e-44f3-8ad3-b54af129ee9d)
 The functions on this page:
 1. Login Function
 2. Registration Function
 3. Forgot password function
+   
 ------------------------------------- Account Profile page ------------------------------------------
 ![image](https://github.com/user-attachments/assets/079c0f5b-d4c5-4944-8519-9f78cae5b4b0)
 ![image](https://github.com/user-attachments/assets/b58e73d5-1882-468d-8efc-5cd9dcbecfff)
@@ -22,6 +24,7 @@ The functions on this page:
 2. Account recovery function.
 3. Function to change password and forget password.
 4. The function of self-uploading the customer's comics.
+   
 ------------------------------------- Comic details page ------------------------------------------
 ![image](https://github.com/user-attachments/assets/bcdf6bdb-9c1c-44ad-96eb-421f1115612f)
 ![image](https://github.com/user-attachments/assets/4529c797-3466-4c49-a298-6aae262f702e)
@@ -29,10 +32,12 @@ The functions on this page:
 1. Function shows all episodes in the series.
 2. Comment function.
 3. Evaluation function.
+   
 ------------------------------------- Read comic page ------------------------------------------
 ![image](https://github.com/user-attachments/assets/e1d6d6d1-25c2-4cbc-bae3-d5ed28090b54)
 The functions on this page:
 1. The function displays all images of the content of the reading story.
+   
 ------------------------------------- Admin page ------------------------------------------
 ![image](https://github.com/user-attachments/assets/ad1cad81-7512-4311-8de1-27b31435e6a5)
 ![image](https://github.com/user-attachments/assets/a2a9772d-af66-40b1-8d20-949b4ca853e2)
