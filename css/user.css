@@ -1,0 +1,266 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #ffffff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    height: 70px;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: inline-block;
+    background-color: #00dc64;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-right: 20px;
+    font-size: 25px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #ffffff;
+    margin: 0 15px;
+    font-weight: bold;
+    border-bottom: 3px solid #333;
+    background-color: #bbbbbb;
+    padding: 38px 20px 35px 20px;
+}
+
+.nav-link1 {
+    text-decoration: none;
+    color: #333;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+.logout-button {
+    background-color: #ff4c4c00;
+    color: #ff4c4c;
+    border: 2px solid #ff4c4c;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #ff4c4c;
+    color: white;
+}
+
+.comic-action {
+    display: flex;
+    justify-content: center; /* Centering horizontally */
+    align-items: center;
+    border-top: 2px solid #ddd;
+}
+
+.search-bar {
+    padding: 8px;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid #ddd;
+    width: 200px;
+    margin-top: 30px;
+}
+
+#search-btn {
+    padding: 8px;
+    margin-top: 30px;
+    background-color: #8d8d8d;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    color: white;
+}
+
+#search-btn:hover {
+    background-color: #3b3b3b;
+    transform: translateY(-2px);
+}
+
+/* User List Styling */
+#users-list {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 30px auto;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    justify-content: space-between;
+}
+
+.user-name {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+.read-more-button, .delete-button {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.read-more-button {
+    background-color: #c7c300; 
+    color: white;
+}
+
+.read-more-button:hover {
+    background-color: #9a9800;
+    transition: background 0.3s; 
+}
+
+.delete-button {
+    background-color: #FF4C4C;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #9e0000;
+    transition: background 0.3s; 
+}
+
+/* Notification Modal Styling */
+.notification-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 1000;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+}
+
+.notification-content {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+}
+
+/* Success and Error Colors */
+.notification-success {
+    background-color: #4CAF50; /* Green for success */
+}
+
+.notification-error {
+    background-color: #f44336; /* Red for error */
+}
+
+/* User Details List Styling */
+.user-details {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.comic-action h2 {
+    margin-top: 30px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-info-left,
+.user-info-right {
+    flex: 1;
+}
+
+.user-info-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center; /* Center-align text within the column */
+}
+
+.user-info-right {
+    flex: 1; /* Gives more space to the right section */
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* Adds space between each item */
+}
+
+.user-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-top: 15px;
+    object-fit: cover;
+}
+
+.user-info-left h2 {
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.user-info-right p {
+    font-size: 16px;
+    color: #555;
+    margin: 8px 0;
+}
+
+.no-info-message {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+    padding: 20px;
+}

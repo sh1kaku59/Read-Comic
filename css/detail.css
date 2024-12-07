@@ -1,0 +1,343 @@
+/* General Styles */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #444; /* Slightly darker text color for better readability */
+}
+
+/* Header */
+header {
+    background: linear-gradient(135deg, #00c47d, #00a765);
+    color: white;
+    text-align: center;
+    padding: 15px 20px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 28px;
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Buttons */
+#home-btn {
+    background-color: #ffffff;
+    color: #00c47d;
+    border: 2px solid #00c47d;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+#home-btn:hover {
+    background-color: #00a765;
+    color: white;
+    transform: scale(1.05) translateY(-2px); /* Slight raise effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Main Content */
+main {
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+}
+
+/* Story Info */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#story-title, #story-desc, #story-rating, #story-image, .chap-item {
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+#truyen-detail .story-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+#story-image {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    animation-delay: 0.1s;
+}
+
+#story-image:hover {
+    transform: scale(1.05); /* Slight zoom-in effect */
+}
+
+.story-text {
+    flex: 1;
+    padding-left: 20px;
+}
+
+#story-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    animation-delay: 0.2s;
+}
+
+#story-desc {
+    font-size: 18px;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    animation-delay: 0.3s;
+}
+
+#story-rating {
+    font-size: 18px;
+    color: #00c47d;
+    animation-delay: 0.4s;
+}
+
+/* Chapters List */
+#chap-list {
+    margin-top: 30px;
+}
+
+h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 700;
+}
+
+.chap-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+/* On smaller screens, display fewer columns */
+@media (max-width: 768px) {
+    .chap-container {
+        grid-template-columns: 1fr 1fr; /* Two columns on small screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .chap-container {
+        grid-template-columns: 1fr; /* Single column on very small screens */
+    }
+}
+
+.chap-item {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 2px solid transparent;
+    font-weight: normal;
+    position: relative;
+}
+
+/* Stagger the animation for each chapter item */
+.chap-item:nth-child(1) {
+    animation-delay: 0.6s; /* No delay for the first item */
+}
+
+.chap-item:nth-child(2) {
+    animation-delay: 0.8s;
+}
+
+.chap-item:nth-child(3) {
+    animation-delay: 1s;
+}
+
+.chap-item:nth-child(4) {
+    animation-delay: 1.2s;
+}
+
+.chap-item:nth-child(5) {
+    animation-delay: 1.4s;
+}
+
+.chap-item:nth-child(6) {
+    animation-delay: 1.6s; 
+}
+
+.chap-item:nth-child(7) {
+    animation-delay: 1.8s;
+}
+
+.chap-item:nth-child(8) {
+    animation-delay: 2s;
+}
+
+.chap-item:nth-child(9) {
+    animation-delay: 2.2s;
+}
+
+.chap-item:nth-child(10) {
+    animation-delay: 2.4s;
+}
+
+.chap-item::after {
+    content: "New"; /* This can be dynamic based on your data */
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff5733; /* Bright color for the label */
+    color: white;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.chap-item a {
+    color: #00a765;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.chap-item a:hover {
+    color: #006e43;
+}
+
+.chap-item a:focus {
+    outline: none;
+    border: 2px solid #00c47d; /* Green border for focus */
+    box-shadow: 0 0 5px rgba(0, 196, 125, 0.3); /* Green glow for focus */
+}
+
+.chap-item:hover {
+    transform: translateY(-10px) scale(1.05) rotate(2deg); /* Add a subtle rotation effect */
+    background-color: #f0f9f2;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    border-color: #00c47d;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Comments Section */
+#binhluan-section {
+    margin-top: 40px;
+    border-top: 2px solid #eee;
+    padding-top: 25px; /* Increased padding for better spacing */
+    background: #ffffff; /* Light gray background */
+}
+
+.binhluan-item {
+    background: #ffffff;
+    padding: 20px; /* Slightly more padding for better spacing */
+    margin-bottom: 20px; /* Increase bottom margin to separate comments */
+    border-radius: 12px; /* Slightly more rounded corners for a softer look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Slightly larger shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.binhluan-item:hover {
+    transform: translateY(-5px) scale(1.02); /* Slight lifting effect */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow on hover */
+}
+
+.binhluan-item p {
+    margin: 8px 0; /* Increased margin for better spacing */
+    font-size: 15px; /* Slightly larger text for better readability */
+    line-height: 1.6; /* Increased line-height for improved readability */
+    color: #333; /* Darker text for better contrast */
+}
+
+#noi-dung-binhluan {
+    width: calc(100% - 30px);
+    height: 120px; /* Increased height for better user experience */
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 16px; /* Slightly larger text for readability */
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fafafa; /* Subtle background for the input area */
+}
+
+#noi-dung-binhluan:focus {
+    outline: none; /* Remove default outline */
+    border-color: #00a765; /* Focus border */
+    box-shadow: 0 0 10px rgba(0, 196, 125, 0.5); /* Enhanced glow effect */
+    background-color: #fff; /* Green glow effect */
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+#btn-binhluan {
+    background: linear-gradient(135deg, #00c47d, #00a765); /* Gradient button */
+    color: white;
+    border: none;
+    padding: 12px 24px; /* Increased padding for better click area */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s ease;
+    font-size: 16px; /* Larger font size for readability */
+}
+
+#btn-binhluan:hover {
+    background-color: #00a765; /* Darker green when hovered */
+    transform: scale(1.05); /* Slight zoom-in effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover */
+}
+
+#btn-binhluan:focus {
+    box-shadow: 0 0 6px rgba(0, 196, 125, 0.3); /* Soft shadow for the button */
+}
+
+#btn-binhluan:active {
+    transform: scale(0.98); /* Slightly reduce size to simulate press */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Pressed effect */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    #binhluan-section {
+        padding-top: 30px;
+    }
+
+    .binhluan-item {
+        padding: 18px; /* Adjust padding for smaller screens */
+    }
+
+    #noi-dung-binhluan {
+        height: 110px; /* Reduce input field height for mobile */
+        font-size: 15px; /* Adjust text size for mobile */
+    }
+
+    #btn-binhluan {
+        font-size: 14px; /* Reduce button font size on mobile */
+        padding: 10px 18px; /* Adjust padding for mobile */
+    }
+}

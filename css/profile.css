@@ -1,0 +1,1022 @@
+/* profile.css */
+
+/* Thiết lập tổng thể */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('img/profile_bg.gif'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat; 
+    color: #646464; /* Màu chữ tối */
+    min-height: 100vh;
+}
+
+header {
+    position: relative;
+    background: linear-gradient(to top, #00da66d9, #007a39bd);
+    color: rgb(255, 255, 255);
+    padding: 20px;
+    text-align: center;
+    transition: background-color 0.8s ease; 
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin: 0;
+    transition: transform 0.3s ease; 
+}
+
+header:hover h1 {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.back-to-home {
+    position: absolute;
+    top: 27px;
+    left: 40px;
+    font-size: 30px;
+    color: white;
+    z-index: 10;
+    text-decoration: none;
+    transition: transform 0.3s ease; 
+    display: flex;
+    align-items: center;
+}
+
+.back-to-home .home-text {
+    display: none;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-left: 2px;
+}
+
+.back-to-home:hover .fa-arrow-left {
+    display: none;
+}
+
+.back-to-home:hover .home-text {
+    display: inline;
+}
+
+.back-to-home:hover {
+    color: #ffffff;    
+    transform: scale(1.35);
+}
+
+/* Phần điều hướng */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    background-color:#00da66d9; 
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 15px 20px;
+    display: block;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+nav ul li a:hover {
+    transform: translateY(2px); 
+    color:#00711a;
+    font-weight: bolder;
+}
+
+/* Phần nội dung hồ sơ */
+#profile-content {
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: space-between; /* Space out the sections */
+    width: 80%;
+    margin: 20px auto;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    padding: 40px;
+    max-width: 800px;
+}
+
+/* Form Add Information */
+#edit-profile-page {
+    flex: 3 1 60%; 
+    margin: 10px;
+    padding: 0;
+    background: linear-gradient(white, #f9f9f9);
+    background-size: 100% 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease; 
+}
+
+#edit-profile-form hr {
+    border: none; /* Remove default border */
+    border-top: 2px solid #e7e7e7; /* Custom color and thickness */
+    margin: 10px 0; /* Add space above and below */
+    width: 100%; /* Make sure it spans the form */
+    opacity: 0.7; /* Light transparency for subtle effect */
+}
+
+.add-header {
+    background-color: #efefef; /* or gradient if desired */
+    border-radius: 10px 10px 0 0; /* Rounded corners for the top */
+    text-align: center;
+    padding: 15px;
+}
+
+.add-header h2 {
+    margin: 0; /* Remove default margin */
+    color: rgb(102, 105, 107);
+    font-size: 1.8em; /* Font size */
+}
+
+#edit-profile-form {
+    padding: 20px;
+}
+
+#edit-profile-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#edit-profile-form input,
+#edit-profile-form select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ffffff93; 
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    background-color: #efefefbb; /* or gradient if desired */
+
+}
+
+#edit-profile-form input:focus,
+#edit-profile-form select:focus {
+    border-color: #00dc6370;
+    transition: background-color 0.3s ease; /* Change border color on focus */
+}
+
+#edit-profile-form .sub-btn {
+    background: transparent;
+    padding: 10px 20px;
+    margin-left: 80px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#edit-profile-form button .btn-text {
+    padding: 14px 45px;
+    font-size: 25px;
+    color: #00a2a2;
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    background: rgba(0,73,88,0.05);
+    backdrop-filter: blur(15px);
+    cursor: pointer;
+    z-index: 1;
+    transition: 0.2s;
+}
+
+#edit-profile-form button .btn-text:hover {
+    color: white;
+}
+
+#edit-profile-form .sub-btn::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -5px;
+    width: 25%;
+    height: 10px;
+    background: #64f7ff;
+    border-radius: 10px;
+    transition: .5s;
+    box-shadow: 0 0 10px rgba(0,194,203,0.5);
+  }
+
+#edit-profile-form .sub-btn:hover::before {
+    bottom: 0;
+    height: 75%;
+    width: 85%;
+    border-radius: 30px;
+    transition-delay: 0.1s;
+  }
+
+#edit-profile-form .sub-btn:hover {
+    transform: translateY(-5%);
+    transition: transform 0.3s ease;
+  }
+
+.avatar-section {
+    flex: 1 1 30%; 
+    margin: 10px; /* Margin to separate sections */
+    text-align: center; /* Center contents */
+    background: linear-gradient(to right, #f1f1f171, #e0f2f181);
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-section img {
+    max-width: 150px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.avatar-section img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-section input[type="file"] {
+    display: block;
+    margin: 10px auto;
+}
+
+@media (max-width: 768px) {
+    #profile-content {
+        flex-direction: column; /* Stack sections on smaller screens */
+    }
+
+    #edit-profile-page,
+    .avatar-section {
+        width: 100%; /* Full width for small screens */
+    }
+}
+
+.select-container {
+    position: relative;
+    width: 100%; /* Full width */
+    margin-bottom: 15px; /* Space below */
+}
+
+.select-container select {
+    width: 100%; /* Full width */
+    padding: 10px; /* Padding */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #ccc; /* Border color */
+    background-color: #ffffff; /* Background color */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Cursor style */
+    appearance: none; /* Remove default arrow */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="7,10 12,15 17,10" fill="%2300DC64"/></svg>'); /* Custom arrow */
+    background-repeat: no-repeat; /* No repeat */
+    background-position: right 10px center; /* Positioning */
+    background-size: 12px; /* Size of arrow */
+    transition: border-color 0.3s ease; /* Transition */
+}
+
+.select-container select:focus {
+    border-color: #00DC64; /* Change border color on focus */
+    outline: none; /* Remove outline */
+}
+
+.plus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 250px; /* Adjust to position below the avatar */
+    left: 69%;
+    width: 200px; /* Set size */
+    height: 30px; /* Set size */
+    background-color: #00ff95b1; /* Background color */
+    color: white; /* Text color */
+    border-radius: 15px; /* Circular shape */
+    cursor: pointer;
+    text-align: center;
+    line-height: 40px; /* Center text vertically */
+    transition: transform 0.3s ease;
+}
+
+.plus:hover {
+    transform: scale(1.05); 
+    background-color: #00716fb8;
+    transition: transform 0.3s ease;
+}
+
+.plus input[type="file"] {
+    display: none; /* Hide the file input */
+}
+
+.sign {
+    font-size: 24px; /* Adjust size of the plus */
+    line-height: 40px;
+}
+
+
+/* Form Edit Information */
+.edit-profile-container {
+    padding: 20px;
+    background: linear-gradient(to top right, #c0f098be, #6FD6FFbe);
+    border-radius: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.603);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.edit-profile-container:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+}
+
+.unique-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.unique-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #cccccc00;
+    border-radius: 10px;
+    background: transparent;
+}
+
+.unique-btn {
+    --offset: 10px;
+  --border-size: 2px;
+  display: block;
+  position: relative;
+  padding: 1.5em 3em;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  outline: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 var(--border-size) currentcolor;
+  margin-top: 20px;
+  margin-left: 130px;
+  margin-right: 130px;
+  transition: background 0.8s ease;
+}
+
+.unique-btn:hover {
+  background: rgba(100, 0, 0, 0.03);
+}
+
+.button__horizontal, .button__vertical {
+  position: absolute;
+  top: var(--horizontal-offset, 0);
+  right: var(--vertical-offset, 0);
+  bottom: var(--horizontal-offset, 0);
+  left: var(--vertical-offset, 0);
+  transition: transform 0.8s ease;
+  will-change: transform;
+}
+
+.button__horizontal::before, .button__vertical::before {
+  content: "";
+  position: absolute;
+  border: inherit;
+}
+
+.button__horizontal {
+  --vertical-offset: calc(var(--offset) * -1);
+  border-top: var(--border-size) solid currentcolor;
+  border-bottom: var(--border-size) solid currentcolor;
+}
+
+.button__horizontal::before {
+  top: calc(var(--vertical-offset) - var(--border-size));
+  bottom: calc(var(--vertical-offset) - var(--border-size));
+  left: calc(var(--vertical-offset) * -1);
+  right: calc(var(--vertical-offset) * -1);
+}
+
+.unique-btn:hover .button__horizontal {
+  transform: scaleX(0);
+}
+
+.button__vertical {
+  --horizontal-offset: calc(var(--offset) * -1);
+  border-left: var(--border-size) solid currentcolor;
+  border-right: var(--border-size) solid currentcolor;
+}
+
+.button__vertical::before {
+  top: calc(var(--horizontal-offset) * -1);
+  bottom: calc(var(--horizontal-offset) * -1);
+  left: calc(var(--horizontal-offset) - var(--border-size));
+  right: calc(var(--horizontal-offset) - var(--border-size));
+}
+
+.unique-btn:hover .button__vertical {
+  transform: scaleY(0);
+}
+
+.avatar-container {
+    position: relative;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top: 10px;
+}
+
+#ava-preview {
+    position: absolute;
+    top: -100px; /* Adjust the value to control how much the image overlaps */
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 50%;
+}
+
+.upload-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: -40px; /* Adjust to position below the avatar */
+    left: 58%;
+    width: 40px; /* Set size */
+    height: 40px; /* Set size */
+    background: linear-gradient(to top, #00a6ff, #0077b6);
+    color: white; /* Text color */
+    border-radius: 50%; /* Circular shape */
+    cursor: pointer;
+    text-align: center;
+    line-height: 40px; /* Center text vertically */
+    
+}
+
+.upload-btn:hover {
+    transform: scale(1.25); 
+    transition: transform 0.3s ease;
+    background: linear-gradient(to top, #00dad3e8, #00497ad4);
+}
+
+.upload-btn input[type="file"] {
+    display: none; /* Hide the actual file input */
+}
+
+.plus-sign {
+    font-size: 24px; /* Adjust the size of the plus */
+    line-height: 40px; /* Center plus sign vertically */
+}
+
+.change-bg-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 40px;
+    background-color: #ffffff40;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    position: absolute; /* Position it absolutely */
+    top: -10px; /* Adjust as needed */
+    right: 15px; /* Adjust as needed */
+    margin: 20px auto; /* Center the button */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.change-bg-btn:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+    background-color: #00c1cb00;
+}
+
+.change-bg-btn i {
+    font-size: 15px; /* Adjust icon size */
+}
+
+#delete-account-btn {
+    background: transparent;
+    margin-top: 45px;
+    border: 0;
+    border: 3px ridge red;
+    color: red;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+#delete-account-btn:hover {
+    border: 3px inset red;
+    background-color: rgb(178, 0, 0);
+    color: white;
+    transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+}
+
+/* Password Management */
+.password-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.password-container img {
+    max-width: 200px; /* Adjust the size as needed */
+    height: auto;
+    margin-right: 50px; /* Adds space between the image and the card */
+    align-self: center; /* Vertically aligns the image */
+}
+
+#forgot {
+    max-width: 150px;
+    height: auto;
+    align-self: center; 
+    margin-left: 50px;
+    
+}
+
+.password-card {
+    background: #22232e;
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 500px;
+    text-align: center;
+    position: relative;
+}
+
+.password-card h2 {
+    color: #eaeaea; 
+    margin-bottom: 50px;
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.password-card h3 {
+    color: #eaeaea; 
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.password-card p {
+    color: #eaeaea;
+}
+
+.password-card .input-container, .mail-container {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.password-card .mail-container {
+    margin-top: 50px;
+}
+
+.password-card input {
+    width: calc(100% - 50px);
+    padding: 15px;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.729); 
+    background: rgba(0, 0, 0, 0);
+    color: #ffffff;
+    font-size: 20px;
+}
+
+.password-card input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0);
+    border-bottom: 2px solid #00DC64; 
+    transition: 0.9s ease;
+}
+
+.password-card label {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    transition: 0.3s ease;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 15px;
+}
+
+.password-card input:focus + label,
+.password-card input:not(:placeholder-shown) + label {
+    top: -10px;
+    left: 10px;
+    font-size: 15px;
+    color: #00DC64;
+}
+
+#change-password-form .pass-btn {
+    position: relative;
+    width: 70%;
+    padding: 20px;
+    background: transparent;
+    color: #e0ffff;
+    font-weight: bold;
+    font-size: 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 1;
+    transition: 0.3s ease;
+}
+
+#change-password-form .pass-btn:active{
+    transform: scale(0.95);
+}
+
+#change-password-form .pass-btn::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 10px;
+    background: #22232e;
+    z-index: -1;
+}
+
+#change-password-form .pass-btn:hover::before{
+    inset: -20px 0px;
+    background: #00c2cb;
+}
+
+#change-password-form .pass-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0px 50px;
+    background: #42455a;
+    transition: inset 350ms ease;
+    z-index: -1;
+}
+
+#password-reset-btn {
+    background-color: #007BFF; /* Bootstrap primary blue */
+    color: #e0ffff; /* White text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Padding */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    border: 2px solid #00c2cb;
+    outline: 2px solid #007BFF;
+    outline-offset: -2px;
+    transition: background-color 0.3s, transform 0.3s, outline-offset 200ms ease; 
+}
+
+#password-reset-btn:hover {
+    background-color: #00c2cb; /* Darker blue on hover */
+    outline: 2px solid #00c2cb;
+    color: #00244a;
+    outline-offset: 3px;
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+#password-reset-btn:active {
+    transform: translateY(0); /* Reset on click */
+}
+
+.input-container .toggle-password i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #646464;
+    transition: 0.3s ease;
+}
+
+.input-container .toggle-password:hover i {
+    color: #00DC64;
+}
+
+.toggle-link {
+    margin-top: 20px;
+}
+
+.toggle-link a {
+    display: block;
+    margin: auto;
+    padding: 1rem 1.25rem;
+    font-family: sans-serif;
+    font-size: 1rem;
+    text-decoration: none;
+    color: white;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    z-index: 1;
+}
+
+.toggle-link a:after {
+    content: "";
+    display: block;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    right: 1.25rem;
+    left: 1.25rem;
+    background: linear-gradient(to right, #009812c7, #00ff1ec7, #5fff72c7);
+    transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    transform-origin: bottom center;
+    z-index: -1;
+    border-radius: 5px;
+}
+
+.toggle-link a:hover {
+    color: #22232e;
+}
+
+.toggle-link a:hover:after {
+    right: 0;
+    left: 0;
+    height: 100%;
+}
+
+/* Danh sách lịch sử truyện */
+#history-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#history-list li {
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-left: 5px solid #303f9f; /* Viền màu xanh nước biển */
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
+}
+
+#history-list li:hover {
+    background-color: #eef7ff; /* Màu xanh nhạt khi hover */
+    transition: 0.3s;
+}
+
+/* Đáp ứng cho màn hình nhỏ */
+@media (max-width: 768px) {
+    #profile-content {
+        padding: 20px;
+    }
+
+    nav ul {
+        flex-direction: column;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+}
+
+/* Upload Comics */
+.upload-comic-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f4f900;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.upload-comic-title {
+    font-size: 30px;
+    color: #505050;
+    margin-bottom: 40px;
+}
+
+/* Grid Layout for Form */
+.upload-comic-form {
+    display: grid;
+    grid-template-columns: 1fr 2fr; 
+    width: 100%;
+}
+
+.upload-comic-field {
+    margin-bottom: 20px;
+}
+
+.upload-comic-left,
+.upload-comic-middle {
+    display: flex;
+    flex-direction: column;
+}
+
+.upload-comic-label {
+    font-size: 18px;
+    color: #333;
+    margin-left: 20px;
+}
+
+.upload-comic-input,
+.upload-comic-select,
+.upload-comic-textarea {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+    background-color: #ffffff;
+    font-size: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.upload-comic-input {
+    border: none;
+    border-bottom: 3px solid rgba(99, 99, 99, 0.729); 
+    border-radius: 5px;
+}
+
+.upload-comic-input:focus,
+.upload-comic-select:focus,
+.upload-comic-textarea:focus {
+    outline: none;
+    border-color: #00DC64;
+    transition: 0.3s;
+}
+
+.upload-comic-textarea {
+    height: 150px;
+    resize: none;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #cccccc00;
+    font-size: 16px;
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width */
+}
+
+.upload-comic-textarea:focus {
+    outline: none;
+    border-color: #00DC64;
+}
+
+.upload-comic-file {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.upload-comic-drag-drop {
+    border: 2px dashed #00DC64; /* Dotted border for drag-and-drop area */
+    padding: 20px;
+    margin-top: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s;
+}
+
+.upload-comic-drag-drop:hover {
+    background-color: #e9f9e9; /* Slight color change on hover */
+}
+
+.upload-comic-drag-drop p {
+    margin: 0;
+    font-size: 16px;
+    color: #646464;
+}
+
+.upload-comic-drag-drop input[type="file"] {
+    display: none; /* Hide the file input */
+}
+
+.upload-comic-preview {
+    margin-top: 10px;
+    max-width: 300px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+}
+
+.upload-comic-field hr {
+    border: 0;
+    height: 3px;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgb(50, 172, 179), rgba(255, 255, 255, 0));
+    margin-bottom: 20px;
+}
+
+.upload-comic-button-container {
+    grid-column: 1 / 4; /* Span across all columns */
+    display: flex;
+    justify-content: center; /* Center the button */
+    overflow: hidden;
+    position: relative;
+    width: 200px;
+    height: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    transition: 0.5s;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    border: 2px solid black;
+}
+
+.upload-comic-btn {
+    width: 101%;
+    height: 100%;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    background: #000;
+    -webkit-mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/urban-sprite.png");
+    mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/urban-sprite.png");
+    -webkit-mask-size: 3000% 100%;
+    mask-size: 3000% 100%;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    -webkit-animation: ani2 0.7s steps(29) forwards;
+    animation: ani2 0.7s steps(29) forwards;
+}
+
+.upload-comic-btn:hover {
+    -webkit-animation: ani 0.7s steps(29) forwards;
+    animation: ani 0.7s steps(29) forwards;
+}
+
+.mas {
+    position: absolute;
+    color: #000;
+    text-align: center;
+    width: 101%;
+    font-family: "Lato", sans-serif;
+    font-weight: 300;
+    position: absolute;
+    font-size: 15px;
+    overflow: hidden;
+    font-weight: bold;
+    align-self: center; 
+}
+
+@-webkit-keyframes ani {
+    from {
+      -webkit-mask-position: 0 0;
+      mask-position: 0 0;
+    }
+    to {
+      -webkit-mask-position: 100% 0;
+      mask-position: 100% 0;
+    }
+  }
+  @keyframes ani {
+    from {
+      -webkit-mask-position: 0 0;
+      mask-position: 0 0;
+    }
+    to {
+      -webkit-mask-position: 100% 0;
+      mask-position: 100% 0;
+    }
+  }
+  @-webkit-keyframes ani2 {
+    from {
+      -webkit-mask-position: 100% 0;
+      mask-position: 100% 0;
+    }
+    to {
+      -webkit-mask-position: 0 0;
+      mask-position: 0 0;
+    }
+  }
+  @keyframes ani2 {
+    from {
+      -webkit-mask-position: 100% 0;
+      mask-position: 100% 0;
+    }
+    to {
+      -webkit-mask-position: 0 0;
+      mask-position: 0 0;
+    }
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Truyện</title>
+    <!-- <link rel="stylesheet" href="/css/style.css"> -->
+    <link rel="stylesheet" href="../css/detail.css">
+</head>
+<body>
+    <header>
+        <h1>COMIC DETAILS</h1>
+        <button id="home-btn" onclick="goHome()">Back to Home</button>
+    </header>
+
+    <main>
+        <div id="truyen-detail">
+            <!-- Thông tin chi tiết truyện sẽ được load vào đây -->
+        </div>
+
+        <div id="chap-list">
+            <!-- Danh sách chương sẽ được load vào đây -->
+        </div>
+
+        <section id="binhluan-section">
+            <h2>Comments</h2>
+            <div id="binhluan-list">
+                <!-- Bình luận sẽ được load vào đây -->
+            </div>
+
+            <textarea id="noi-dung-binhluan" placeholder="Enter your comments here..."></textarea>
+            <button id="btn-binhluan">Send comments</button>
+        </section>
+    </main>
+
+    <script>
+        let chapID;
+        let TenTr;
+
+        const tenTruyen = sessionStorage.getItem('tentruyen');
+
+        // Gửi yêu cầu để lấy chi tiết truyện
+        async function fetchTruyenDetailByTenTruyen() {
+            try {
+                const response = await fetch(`/api/truyen/${tenTruyen}`);
+                const truyenDetail = await response.json();
+
+                const detailContainer = document.getElementById('truyen-detail');
+                const truyen = truyenDetail[0];
+
+                // Gán giá trị ChapID từ dữ liệu truyện
+                TenTr = truyen.tentruyen;
+
+                // Lưu chapID và tên truyện vào sessionStorage
+                sessionStorage.setItem('XuatTenTruyen', TenTr);
+
+                detailContainer.innerHTML = `
+                    <div class="story-info">
+                        <img id="story-image" src="${truyen.hinhanh}" alt="${truyen.tentruyen}">
+                        <div class="story-text">
+                            <h2 id="story-title">${truyen.tentruyen}</h2>
+                            <p id="story-desc">${truyen.mota}</p>
+                            <p id="story-rating">Đánh giá: ${truyen.danhgia}</p>
+                        </div>
+                    </div>
+                `;
+
+                // Tạo danh sách chương với ChapID và TenChap
+                const danhSachChuong = truyenDetail.map(chap => ({
+                    chapID: chap.chuongid,
+                    tenChap: chap.tieude
+                }));
+                // Lưu danh sách chương vào sessionStorage dưới dạng JSON
+                sessionStorage.setItem('DanhSachChuong', JSON.stringify(danhSachChuong));
+
+                const chapContainer = document.getElementById('chap-list'); 
+                chapContainer.innerHTML = '';
+
+                truyenDetail.forEach(chap => {
+                    if (chap.tieude) {
+                        const chapItem = document.createElement('div');
+                        chapItem.classList.add('chap-item');
+                        chapItem.innerHTML = `<a href="/${tenTruyen}/${chap.tieude}" onclick="saveChapID('${chap.chuongid}', '${chap.tieude}')">${chap.tieude}</a>`;
+                        chapContainer.appendChild(chapItem);
+                    }
+                });
+
+                fetchBinhLuan(truyen.id);
+            } catch (err) {
+                console.error('Failed to fetch story details:', err);
+            }
+        }
+
+
+        // Hàm lưu chapID vào sessionStorage khi nhấp vào chương
+        function saveChapID(chapID, tenChap ) {
+            console.log('Lưu ChapID:', chapID, 'Tên Chương:', tenChap);
+            sessionStorage.setItem('XuatChapID', chapID);
+            sessionStorage.setItem('TenChap', tenChap); // Lưu tên chương
+        }
+
+        // Gọi hàm khi trang tải xong
+        document.addEventListener('DOMContentLoaded', fetchTruyenDetailByTenTruyen);
+
+        // Hàm lấy danh sách bình luận cho một truyện và hiển thị
+        async function fetchBinhLuan(truyenID) {
+            try {
+                const response = await fetch(`/api/binhluan?idtruyen=${truyenID}`);
+                const binhLuanList = await response.json();
+
+                const binhLuanContainer = document.getElementById('binhluan-list');
+                binhLuanContainer.innerHTML = '';
+
+                if (binhLuanList.length === 0) {
+                    binhLuanContainer.innerHTML = '<p>Chưa có bình luận nào.</p>';
+                    return;
+                }
+
+                binhLuanList.forEach(binhLuan => {
+                    const binhLuanItem = document.createElement('div');
+                    binhLuanItem.classList.add('binhluan-item');
+                    binhLuanItem.innerHTML = `
+                        <p><strong>${binhLuan.idkh}</strong> (Chương: ${binhLuan.tieude}, ngày: ${new Date(binhLuan.ngayvagio).toLocaleString()})</p>
+                        <p>${binhLuan.noidung}</p>
+                    `;
+                    binhLuanContainer.appendChild(binhLuanItem);
+                });
+            } catch (err) {
+                console.error('Error fetching binh luan:', err);
+            }
+        }
+
+        // Go home function
+        function goHome() {
+            window.location.href = '/home.html';
+        }
+    </script>
+</body>
+</html>
