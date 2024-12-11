@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episode Management</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <a href="admin.html" class="logo"><span>ADMIN</span></a>
+            <a href="admin.html" class="nav-link1">COMICS</a>
+            <a href="genre.html" class="nav-link1">GENRES</a>
+            <a href="user.html" class="nav-link1">USERS</a>
+        </div>
+        <div class="navbar-right">
+            <button class="logout-button">Logout</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="breadcrumbs">
+            <span class="breadcrumb-inactive">1</span> <span>SERIES</span>
+            <span class="breadcrumb-space"></span>
+            <span class="breadcrumb-active">2</span> <span>EPISODES</span>
+        </div>
+    </div>
+
+    <div class="comic-action">
+        <button class="add-button" id="addEpisodeButton">Add</button>
+        <div class="search">
+            <input type="text" id="comic-search" placeholder="Search episodes title..." class="search-bar">
+            <button id="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+
+    <div class="content" id="episodeList">
+        <!-- Comic information will be displayed here -->
+    </div>
+
+    <!-- Add Episode Modal -->
+    <div id="addEpisodeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Episode</h2>
+
+            <input type="text" id="episodeTitle" placeholder="Title" required>
+            <input type="number" id="episodeNumber" placeholder="Chapter Number" required>
+
+            <label for="addImages" class="upload-label">Upload Images (Max 200MB):</label>
+            <input type="file" id="addImages" accept="image/*" multiple required>
+            <div id="addImagePreview" class="image-preview-container"></div>
+
+            <button id="saveEpisodeButton">Save</button>
+        </div>
+    </div>
+
+    <!-- Edit Episode Modal -->
+    <div id="editEpisodeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-edit">&times;</span>
+            <h2>Edit Episode</h2>
+
+            <input type="text" id="editEpisodeTitle" placeholder="Title" required>
+            <input type="number" id="editEpisodeNumber" placeholder="Chapter Number" required>
+
+            <label for="editImages" class="upload-label">Upload Images (Max 200MB):</label>
+            <input type="file" id="editImages" accept="image/*" multiple>
+            <div id="editImagePreview" class="image-preview-container"></div>    
+
+            <button id="saveEditEpisodeButton">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="modalmess" style="display: none;">
+        <div class="modal-message">
+            <span id="modalMessage"></span>
+        </div>
+    </div>
+
+    <script>
+        // Function to get the comicId from the URL query string
+        function getComicIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('comicId'); // Assuming the query parameter is 'comicId'
+        }
+
+        // Function to fetch episodes for a specific comic
+        async function fetchEpisodes(comicId) {
+            try {
+                const response = await fetch(`/api/comic/${comicId}/episodes`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch episodes');
+                }
+
+                const episodes = await response.json();
+                displayEpisodes(episodes); // Call the function to display episodes
+            } catch (error) {
+                console.error('Error fetching episodes:', error);
+            }
+        }
+
+        // Function to display episodes on the page
+        function displayEpisodes(episodes) {
+            const episodeList = document.getElementById('episodeList');
+
+            // Clear the list before adding new episodes
+            episodeList.innerHTML = '';
+
+            // Check if there are no episodes
+            if (episodes.length === 0) {
+                const noEpisodesMessage = document.createElement('p');
+                noEpisodesMessage.classList.add('no-episodes-message');
+                noEpisodesMessage.textContent = 'No episodes available for this comic.';
+                episodeList.appendChild(noEpisodesMessage);
+                return;
+            }
+
+            // Loop through episodes and display each one
+            episodes.forEach(episode => {
+                const episodeItem = document.createElement('div');
+                episodeItem.classList.add('episode-item');
+
+                const textContainer = document.createElement('div');
+                textContainer.classList.add('episode-text');
+
+                const episodeTitle = document.createElement('h3');
+                episodeTitle.textContent = `Chapter ${episode.sochuong}: ${episode.tieude}`;
+
+                const episodeDate = document.createElement('p');
+                episodeDate.textContent = `Published on: ${new Date(episode.ngaydang).toLocaleDateString()}`;
+
+                textContainer.appendChild(episodeTitle);
+                textContainer.appendChild(episodeDate);
+
+                const actions = document.createElement('div');
+                actions.classList.add('episode-actions');
+
+                // Edit button
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.classList.add('edit-button');
+                editButton.addEventListener('click', () => editEpisode(episode.chuongid));
+
+                // Delete button
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.classList.add('delete-button');
+                deleteButton.addEventListener('click', () => deleteEpisode(episode.chuongid));
+
+                actions.appendChild(editButton);
+                actions.appendChild(deleteButton);
+
+                episodeItem.appendChild(textContainer);
+                episodeItem.appendChild(actions);
+
+                // Append episode item to the list
+                episodeList.appendChild(episodeItem);
+            });
+        }
+
+        // On page load, fetch episodes for the comic
+        document.addEventListener('DOMContentLoaded', () => {
+            const comicId = getComicIdFromURL();
+            if (comicId) {
+                fetchEpisodes(comicId); // Fetch and display episodes for the comic
+            } else {
+                console.error('Comic ID is missing from the URL');
+            }
+        });
+
+        // Add New Episode
+        document.getElementById("saveEpisodeButton").addEventListener("click", async () => {
+            const comicId = getComicIdFromURL();
+            const title = document.getElementById("episodeTitle").value;
+            const chapterNumber = document.getElementById("episodeNumber").value;
+
+            if (!title || !chapterNumber) {
+                showNotification("Please fill out all fields.", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/comic/${comicId}/episodes`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, chapterNumber }),
+                });
+
+                if (response.ok) {
+                    showNotification("Episode added successfully!", "success");
+                    fetchEpisodes(comicId); // Refresh episode list
+                    document.getElementById("addEpisodeModal").style.display = "none"; // Close modal
+                } else {
+                    throw new Error("Failed to add episode");
+                }
+            } catch (error) {
+                console.error("Error adding episode:", error);
+                showNotification("Failed to add episode. Please try again.", "error");
+            }
+        });
+
+        // Edit Episode
+        document.getElementById("saveEditEpisodeButton").addEventListener("click", async () => {
+            const comicId = getComicIdFromURL();
+            const episodeId = document.getElementById("editEpisodeModal").dataset.episodeId; // Get stored episodeId
+            const title = document.getElementById("editEpisodeTitle").value;
+            const chapterNumber = document.getElementById("editEpisodeNumber").value;
+
+            if (!title || !chapterNumber) {
+                showNotification("Please fill out all fields.", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/comic/${comicId}/episode/${episodeId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, chapterNumber }),
+                });
+
+                if (response.ok) {
+                    showNotification("Episode updated successfully!", "success");
+                    fetchEpisodes(comicId); // Refresh episode list
+                    document.getElementById("editEpisodeModal").style.display = "none"; // Close modal
+                } else {
+                    throw new Error("Failed to update episode");
+                }
+            } catch (error) {
+                console.error("Error updating episode:", error);
+                showNotification("Failed to update episode. Please try again.", "error");
+            }
+        });
+
+        // Function to search episodes
+        function searchEpisodes() {
+            const searchInput = document.getElementById("comic-search").value.toLowerCase(); // Get search input
+            const episodeItems = document.querySelectorAll(".episode-item"); // Get all episode items
+
+            episodeItems.forEach((item) => {
+                const title = item.querySelector("h3").textContent.toLowerCase(); // Get the episode title
+
+                // Check if the search term is in the title or date
+                if (title.includes(searchInput)) {
+                    item.style.display = ""; // Show matching episodes
+                } else {
+                    item.style.display = "none"; // Hide non-matching episodes
+                }
+            });
+        }
+
+        // Attach the search functionality to the search button
+        document.getElementById("search-btn").addEventListener("click", searchEpisodes);
+
+        // Optional: Trigger search on pressing Enter in the input field
+        document.getElementById("comic-search").addEventListener("keyup", (event) => {
+            if (event.key === "Enter") {
+                searchEpisodes();
+            }
+        });
+
+        // Delete episode functionality
+        async function deleteEpisode(episodeId) {
+            const comicId = getComicIdFromURL(); // Retrieve the comic ID from the URL
+
+            if (!comicId) {
+                console.error('Comic ID is missing from the URL');
+                return;
+            }
+
+            const confirmDelete = confirm('Are you sure you want to delete this episode?');
+            if (!confirmDelete) {
+                return; // Exit if the user cancels
+            }
+
+            try {
+                const response = await fetch(`/api/comic/${comicId}/episode/${episodeId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete the episode');
+                }
+
+                showNotification("Episode deleted successfully!", "success");
+                fetchEpisodes(comicId); // Refresh the episode list after deletion
+            } catch (error) {
+                console.error('Error deleting episode:', error);
+                showNotification("Failed to delete episode. Please try again.", "error");
+            }
+        }
+
+        // Edit episode functionality
+        function editEpisode(episodeId) {
+            const comicId = getComicIdFromURL();
+
+            fetch(`/api/comic/${comicId}/episode/${episodeId}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch episode details");
+                    }
+                    return response.json();
+                })
+                .then((episode) => {
+                    document.getElementById("editEpisodeTitle").value = episode.title;
+                    document.getElementById("editEpisodeNumber").value = episode.chapterNumber;
+                    document.getElementById("editEpisodeModal").dataset.episodeId = episodeId; // Store episodeId in modal
+                    document.getElementById("editEpisodeModal").style.display = "block"; // Open modal
+                })
+                .catch((error) => {
+                    console.error("Error fetching episode details:", error);
+                    showNotification("Failed to fetch episode details.", "error");
+                });
+        }
+
+        // Show and hide modal logic
+        const addModal = document.getElementById("addEpisodeModal");
+        const editModal = document.getElementById("editEpisodeModal");
+        const notificationModal = document.getElementById("notificationModal");
+        const modalMessage = document.getElementById("modalMessage");
+
+        // Open Add Modal
+        document.getElementById("addEpisodeButton").addEventListener("click", () => {
+            addModal.style.display = "block";
+        });
+
+        // Close Add Modal
+        document.querySelector(".close").addEventListener("click", () => {
+            addModal.style.display = "none";
+        });
+
+        // Open Edit Modal
+        document.querySelector("#episodeList").addEventListener("click", (e) => {
+            if (e.target.classList.contains("edit-button")) {
+                editModal.style.display = "block";
+                // You can populate the modal fields here using dataset or fetch episode data
+            }
+        });
+
+        // Close Edit Modal
+        document.querySelector(".close-edit").addEventListener("click", () => {
+            editModal.style.display = "none";
+        });
+
+        // Show notification
+        function showNotification(message, type) {
+            const notificationModal = document.getElementById("notificationModal");
+            const modalMessage = document.getElementById("modalMessage");
+
+            modalMessage.textContent = message;
+            modalMessage.style.color = type === "success" ? "green" : "red";
+
+            notificationModal.style.display = "flex";
+
+            setTimeout(() => {
+                notificationModal.style.display = "none";
+            }, 3000);
+        }
+
+        // Logout
+        document.querySelector(".logout-button").addEventListener("click", function() {
+            window.location.href = "home.html"; // Redirect to home.html
+        });
+    </script>
+    
+</body>
+</html>

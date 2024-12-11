@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <link rel="stylesheet" href="user.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <a href="admin.html" class="logo"><span>ADMIN</span></a>
+            <a href="admin.html" class="nav-link1">COMICS</a>
+            <a href="genre.html" class="nav-link1">GENRES</a>
+            <a href="user.html" class="nav-link1">USERS</a>
+        </div>
+        <div class="navbar-right">
+            <button class="logout-button">Logout</button>
+        </div>
+    </div>
+
+    <div class="comic-action">
+        <h2> Details Information </h2>
+    </div>
+
+    <div class="user-details" id="user-details">
+        <div class="user-info">
+            <div class="user-info-left">
+                <img src="" alt="User Avatar" class="user-avatar" id="user-avatar">
+                <h2 id="user-name"></h2>
+            </div>
+            <div class="user-info-right">
+                <p><strong>Username:</strong> <span id="user-username"></span></p>
+                <p><strong>Date of Birth:</strong> <span id="user-dob"></span></p>
+                <p><strong>Gender:</strong> <span id="user-gender"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch user details from the server
+        async function fetchUserDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username');
+
+            try {
+                const response = await fetch(`/api/users/${username}`);
+                
+                // Check if the user is not found (404)
+                if (response.status === 404) {
+                    displayNoInformationMessage();
+                    return;
+                }
+                
+                if (!response.ok) throw new Error('Failed to fetch user details');
+
+                const user = await response.json();
+                displayUserDetails(user);
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                displayNoInformationMessage(); // Display message on fetch error
+            }
+        }
+
+        // Function to display user details
+        function displayUserDetails(user) {
+            document.getElementById('user-name').textContent = user.taikhoan;
+            document.getElementById('user-username').textContent = user.tenkh;
+
+            const dob = new Date(user.ngaysinh);
+            document.getElementById('user-dob').textContent = dob.toLocaleDateString('en-GB');
+
+            document.getElementById('user-gender').textContent = user.gioitinh;
+            document.getElementById('user-avatar').src = user.avatar || 'default-avatar.png';
+        }
+
+        // Function to display "no information" message
+        function displayNoInformationMessage() {
+            const userDetailsDiv = document.getElementById('user-details');
+            userDetailsDiv.innerHTML = `<p class="no-info-message">User didn't add any information yet.</p>`;
+        }
+
+        // Logout
+        document.querySelector(".logout-button").addEventListener("click", function() {
+            window.location.href = "home.html"; // Redirect to home.html
+        });
+
+        // Fetch user details when the page loads
+        fetchUserDetails();
+    </script>
+</body>
+</html>

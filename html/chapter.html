@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đọc Chương</title>
+    <link rel="stylesheet" href="../css/chapter.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <nav class="nav-bar">
+        <button class="nav-btn" id="home-btn">
+            <i class="fas fa-home"></i> 
+        </button>
+        <button class="nav-btn" id="prev-btn">
+            <i class="fas fa-arrow-left"></i> 
+        </button>
+        
+        <select id="chapter-select">
+            <!-- Các chương khác sẽ được thêm vào đây -->
+        </select>
+    
+        <button class="nav-btn" id="next-btn">
+            <i class="fas fa-arrow-right"></i> 
+        </button>
+        <button class="nav-btn" id="follow-btn">
+            <i class="fas fa-comment"></i>
+        </button>
+    </nav>
+    
+    <main>
+        <div id="anh-list">
+            <!-- Hình ảnh của chương sẽ được load vào đây -->
+        </div>
+
+        <section id="binhluan-section">
+            <h2>Comment</h2>
+            <div id="binhluan-list">
+                <!-- Bình luận sẽ được load vào đây -->
+            </div>
+
+            <textarea id="noi-dung-binhluan" placeholder="Enter your comment here..."></textarea>
+            <button id="btn-binhluan">Send comment</button>
+        </section>
+    </main>
+
+    <script>
+        // Lấy dữ liệu từ sessionStorage
+        const XuatChapID = sessionStorage.getItem('XuatChapID');
+        const XuatTenTr = sessionStorage.getItem('XuatTenTruyen');
+        const TenChap = sessionStorage.getItem('TenChap');
+
+        // Hàm lấy danh sách ảnh của một chương
+        async function fetchAnhChap() {
+            const chapID = XuatChapID;
+            const TenTruyen = XuatTenTr;
+            const tenchap = TenChap;
+            console.log("Giá trị của chapID là:", chapID);
+            console.log("Giá trị của TenChap là:", TenChap); // Kiểm tra xem giá trị có hợp lệ không
+            try {
+                const response = await fetch(`/api/chap/${chapID}/anh`);
+                const anhList = await response.json();
+
+                const anhContainer = document.getElementById('anh-list');
+                anhContainer.innerHTML = '';
+
+                anhList.forEach(anh => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `/truyen/${XuatTenTr}/${TenChap}/${anh.LinkAnh}`;  // Thêm tiền tố /images/
+
+                    const tenAnh = anh.LinkAnh.split('.')[0]; // Lấy tên tệp không có phần mở rộng
+                    imgElement.alt = `${tenAnh}`; // Hiển thị tên tệp không có phần mở rộng
+                    anhContainer.appendChild(imgElement);
+                });
+            } catch (err) {
+                console.error('Error fetching anh chap:', err);
+            }
+        }
+
+        // Hàm lấy danh sách chương từ sessionStorage
+        function loadChapters() {
+            const danhSachChuong = JSON.parse(sessionStorage.getItem('DanhSachChuong'));
+            return danhSachChuong || [];
+        }
+
+
+        // Cập nhật DOM cho phần <select> với danh sách chương
+            function renderChapters(chapters) {
+            const selectElement = document.getElementById('chapter-select');
+
+            if (selectElement) {
+                // Xóa các option cũ nếu có
+                selectElement.innerHTML = '';
+                
+                chapters.forEach(chap => {
+                    const option = document.createElement('option');
+                    option.value = chap.chapID;
+                    option.textContent = chap.tenChap;
+                    selectElement.appendChild(option);
+                });
+
+                // Đồng bộ với chap hiện tại
+                if (XuatChapID) {
+                    selectElement.value = XuatChapID; // Chọn chương hiện tại trong dropdown
+                }
+            }
+        }
+
+        document.getElementById('chapter-select').addEventListener('change', function () {
+            const selectedChapID = this.value;
+            const selectedChapName = this.options[this.selectedIndex].text;
+            saveChapID(selectedChapID, selectedChapName); // Lưu vào sessionStorage
+            window.location.href = `/${XuatTenTr}/${selectedChapName}`; // Điều hướng đến chương mới
+        });
+
+        function saveChapID(chapID, tenChap) {
+            sessionStorage.setItem('XuatChapID', chapID);
+            sessionStorage.setItem('TenChap', tenChap); // Lưu tên chương
+        }
+
+
+        // Khi trang tải xong, thực hiện load và render danh sách chương
+        document.addEventListener('DOMContentLoaded', function() {
+            const chapters = loadChapters(); // Tải danh sách chương
+            renderChapters(chapters); // Render danh sách chương
+            fetchAnhChap(); // Tải ảnh chương
+            fetchBinhLuan();
+        });
+
+
+
+        const idcuatruyen = sessionStorage.getItem('XuatTruyenID');
+
+
+        async function fetchBinhLuan() {
+    try {
+        const idcuatruyen = sessionStorage.getItem('XuatTruyenID');
+        console.log('binhluanID:', idcuatruyen);
+        const response = await fetch(`/api/binhluan?idtruyen=${idcuatruyen}`);
+        const binhLuanList = await response.json();
+
+        const binhLuanContainer = document.getElementById('binhluan-list');
+        binhLuanContainer.innerHTML = '';
+
+        if (binhLuanList.length === 0) {
+            binhLuanContainer.innerHTML = '<p>Chưa có bình luận nào.</p>';
+            return;
+        }
+
+        // Duyệt qua danh sách bình luận và gọi API để lấy tên khách hàng cho mỗi bình luận
+        for (const binhLuan of binhLuanList) {
+            // Gọi API lấy tên khách hàng
+            const customerResponse = await fetch(`/api/ten-khach-hang?idkh=${binhLuan.idkh}`);
+            const customerData = await customerResponse.json();
+
+            const binhLuanItem = document.createElement('div');
+            binhLuanItem.classList.add('binhluan-item');
+            binhLuanItem.innerHTML = `
+                <p><strong>${customerData.tenkh || binhLuan.idkh}</strong> (Chương: ${binhLuan.idnd}, ngày: ${new Date(binhLuan.ngayvagio).toLocaleString()})</p>
+                <p>${binhLuan.noidung}</p>
+            `;
+            binhLuanContainer.appendChild(binhLuanItem);
+        }
+    } catch (err) {
+        console.error('Error fetching binh luan:', err);
+    }
+}
+
+
+
+async function postBinhLuan() {
+        const noiDung = document.getElementById('noi-dung-binhluan').value;
+        const idTruyen = sessionStorage.getItem('XuatTruyenID');
+        const TChap = sessionStorage.getItem('TenChap');
+
+        console.log("Giá trị của TruyenID là:", idTruyen);
+
+        if (!noiDung) return alert('Chưa nhập bình luận!');
+
+        try {
+            // Kiểm tra trạng thái đăng nhập
+            const loginRes = await fetch('/api/check-login');
+            const loginStatus = await loginRes.json();
+
+            if (!loginStatus.isLoggedIn) {
+                return alert('Bạn cần đăng nhập để bình luận!');
+            }
+
+            const tenTK = loginStatus.username;
+
+            // Tìm ID khách hàng dựa trên username
+            const customerRes = await fetch(`/api/customer-id?username=${tenTK}`);
+            const customerData = await customerRes.json();
+
+            if (!customerRes.ok || !customerData.customerId) {
+                return alert('Không tìm thấy thông tin khách hàng!');
+            }
+
+            const customerId = customerData.customerId;
+
+            // Gửi yêu cầu bình luận
+            const res = await fetch('/api/comments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    content: noiDung,
+                    comicId: idTruyen,
+                    customerId: customerId ,
+                    idnoidung: TChap
+                })
+            });
+
+            const result = await res.json();
+            alert(result.message);
+            if (res.ok) fetchBinhLuan(idTruyen);
+        } catch (err) {
+            console.error('Lỗi:', err);
+            alert('Lỗi xảy ra!');
+        }
+    }
+
+
+    document.getElementById('btn-binhluan').addEventListener('click', postBinhLuan);
+
+
+
+    // Navbar fade
+    let lastScrollTop = 0; // To track the last scroll position
+
+// Listen for scroll events
+window.addEventListener('scroll', function () {
+    const navBar = document.querySelector('.nav-bar');
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (currentScroll > lastScrollTop) {
+        // If scrolling down, hide the navbar
+        navBar.classList.add('hidden');
+    } else {
+        // If scrolling up, show the navbar
+        navBar.classList.remove('hidden');
+    }
+
+    // Update the last scroll position
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+});
+
+// Home button
+document.getElementById('home-btn').addEventListener('click', function() {
+    // Redirect to home.html
+    window.location.href = '/home.html';  // Change 'home.html' to your desired home page URL
+});
+
+// Scroll down to comment
+document.getElementById('follow-btn').addEventListener('click', function() {
+    // Scroll to the bottom of the page
+    window.scrollTo({
+        top: document.body.scrollHeight,  // Scroll to the bottom
+        behavior: 'smooth'  // Optional: adds a smooth scroll animation
+    });
+});
+
+
+    </script>
+</body>
+</html>

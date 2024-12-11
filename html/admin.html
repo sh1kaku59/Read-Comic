@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <a href="#" class="logo"><span>ADMIN</span></a>
+            <a href="#" class="nav-link">COMICS</a>
+            <a href="genre.html" class="nav-link1">GENRES</a>
+            <a href="user.html" class="nav-link1">USERS</a>
+        </div>
+        <div class="navbar-right">
+            <button class="logout-button">Logout</button>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="breadcrumbs">
+            <span class="breadcrumb-active">1</span> <span>SERIES</span>
+            <span class="breadcrumb-space"></span>
+            <span class="breadcrumb-inactive">2</span> <span>EPISODES</span>
+        </div>
+    </div>
+
+    <div class="comic-action">
+        <button class="add-button" id="addComicButton">Add</button>
+        <div class="search">
+            <input type="text" id="comic-search" placeholder="Search comic title or author..." class="search-bar">
+            <button id="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+
+    <div class="content" id="comics-list">
+        <!-- Content list goes here -->
+    </div>
+
+    <div id="addComicModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Comic</h2>
+
+            <input type="text" id="comicTitle" placeholder="Title" required>
+
+            <input type="text" id="comicAuthor" placeholder="Author" required>
+
+            <select id="comicCategory">
+                <option value="all">All</option>
+                <option value="1">Action</option>
+                <option value="2">Adventure</option>
+                <option value="3">Comedy</option>
+                <option value="4">Romance</option>
+                <option value="5">Sci-fi</option>
+                <option value="6">Horror</option>
+            </select>
+
+            <select id="comicStatus" name="comicStatus" required>
+                <option value="Đang viết">In Progress</option>
+                <option value="Hoàn thành">Done</option>
+            </select>
+
+            <textarea id="comicDescription" placeholder="Write a brief synopsis of your comic..." required></textarea>  
+
+            <div id="dropArea" class="drop-area" onclick="document.getElementById('comicImage').click()">
+                <p>Drag & drop an image file here or click to select one</p>
+                <input type="file" id="comicImage" accept="image/*" style="display: none;" onchange="validateImage(event)">
+                <img id="imagePreview" class="image-preview" src="" alt="Image Preview" style="display: none;">
+            </div>          
+            
+            <button id="saveComicButton">Save</button>
+        </div>
+    </div>    
+
+    <div id="editComicModal" class="modal">
+        <div class="modal-content">
+            <span class="close-edit">&times;</span>
+            <h2>Edit Comic</h2>
+    
+            <input type="text" id="editComicTitle" placeholder="Title" required>
+            <input type="text" id="editComicAuthor" placeholder="Author" required>
+            
+            <select id="editComicCategory">
+                <option value="all">All</option>
+                <option value="1">Action</option>
+                <option value="2">Adventure</option>
+                <option value="3">Comedy</option>
+                <option value="4">Romance</option>
+                <option value="5">Sci-fi</option>
+                <option value="6">Horror</option>
+            </select>
+
+            <select id="editComicStatus">
+                <option value="Đang viết">In Progress</option>
+                <option value="Hoàn thành">Done</option>
+            </select>
+    
+            <textarea id="editComicDescription" placeholder="Write a brief synopsis of your comic..." required></textarea>  
+    
+            <div id="editDropArea" class="drop-area" onclick="document.getElementById('editComicImage').click()">
+                <p>Drag & drop an image file here or click to select one</p>
+                <input type="file" id="editComicImage" accept="image/*" style="display: none;" onchange="validateImageEdit(event, 'editImagePreview')">
+                <img id="editImagePreview" class="image-preview" src="" alt="Image Preview" style="display: none;">
+            </div>          
+                
+            <button id="saveEditComicButton">Save Changes</button>
+        </div>
+    </div>
+    
+    <div id="notificationModal" class="modalmess" style="display: none;">
+        <div class="modal-message">
+            <span id="modalMessage"></span>
+        </div>
+    </div>
+            
+    <script>
+        // Function to fetch comics from the server
+        async function fetchComics() {
+            try {
+                const response = await fetch('/api/comics');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching comics:', error);
+                return [];
+            }
+        }
+
+        // Function to fetch categories and populate the <select> dropdown
+        async function fetchCategories() {
+            try {
+                const response = await fetch('/api/genres'); // Fetch categories from the API
+                if (!response.ok) {
+                    throw new Error('Failed to fetch categories');
+                }
+                const categories = await response.json(); // Get the categories as JSON
+
+                const categorySelect = document.getElementById("comicCategory");
+                categorySelect.innerHTML = ''; // Clear any existing options
+
+                // Add a default option
+                const defaultOption = document.createElement("option");
+                defaultOption.value = "all";
+                defaultOption.textContent = "All Categories";
+                categorySelect.appendChild(defaultOption);
+
+                // Loop through the categories and add them to the <select>
+                categories.forEach(category => {
+                    const option = document.createElement("option");
+                    option.value = category.id; // Set the value as the category ID
+                    option.textContent = category.tendm; // Set the text as the category name
+                    categorySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                alert("Error fetching categories.");
+            }
+        }
+
+        async function fetchGenresForEdit() {
+            try {
+                const response = await fetch('/api/genres'); // API to fetch all genres
+                if (!response.ok) {
+                    throw new Error('Failed to fetch genres');
+                }
+
+                const genres = await response.json(); // Get genre list
+                const categorySelect = document.getElementById("editComicCategory");
+                categorySelect.innerHTML = ''; // Clear existing options
+
+                // Populate the dropdown
+                genres.forEach(genre => {
+                    const option = document.createElement("option");
+                    option.value = genre.id; // Genre ID
+                    option.textContent = genre.tendm; // Genre name
+                    categorySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching genres:", error);
+            }
+        }
+
+        // Call the function to populate categories when the page loads
+        document.addEventListener("DOMContentLoaded", fetchCategories);
+
+        // Function to show the modal notification
+        function showModalNotification(message, type) {
+            const notificationModal = document.getElementById("notificationModal");
+            const modalMessage = document.getElementById("modalMessage");
+
+            // Set the message and display the modal
+            modalMessage.textContent = message;
+
+            // Set the text color based on the type
+            modalMessage.style.color = type === 'success' ? 'green' : 'red';
+            
+            notificationModal.style.display = "flex";
+
+            // Hide the modal after 3 seconds
+            setTimeout(() => {
+                notificationModal.style.display = "none";
+            }, 3000);
+        }
+
+        // Preview and validate image for add
+        function validateImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById("imagePreview");
+
+            if (!file) {
+                alert("Please select an image.");
+                preview.style.display = "none";
+                return;
+            }
+
+            // Check the file type
+            const allowedTypes = ["image/jpeg", "image/png"];
+            if (!allowedTypes.includes(file.type)) {
+                alert("Invalid file type. Please upload a JPG, JPEG, or PNG image.");
+                event.target.value = ""; // Clear the file input
+                preview.style.display = "none";
+                return;
+            }
+
+            // Validate dimensions using an Image object
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    if (img.width !== 1077 || img.height !== 1077) {
+                        alert("Invalid image dimensions. Please upload an image with 1077x1077 resolution.");
+                        event.target.value = ""; // Clear the file input
+                        preview.style.display = "none";
+                    } else {
+                        // Display preview if valid
+                        preview.src = e.target.result;
+                        preview.style.display = "block";
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Preview and validate image for edit
+        function validateImageEdit(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById("editImagePreview");
+
+            if (!file) {
+                alert("Please select an image.");
+                preview.style.display = "none";
+                return;
+            }
+
+            const allowedTypes = ["image/jpeg", "image/png"];
+            if (!allowedTypes.includes(file.type)) {
+                alert("Invalid file type. Please upload a JPG, JPEG, or PNG image.");
+                event.target.value = ""; // Clear the file input
+                preview.style.display = "none";
+                return;
+            }
+
+            // Validate dimensions using an Image object
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    if (img.width !== 1077 || img.height !== 1077) {
+                        alert("Invalid image dimensions. Please upload an image with 1077x1077 resolution.");
+                        event.target.value = ""; // Clear the file input
+                        preview.style.display = "none";
+                    } else {
+                        // Display preview if valid
+                        preview.src = e.target.result;
+                        preview.style.display = "block";
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Function to delete a comic from the database
+        async function deleteComic(comicId) {
+            try {
+                // Send DELETE request to API
+                const response = await fetch(`/api/comics/${comicId}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Failed to delete comic');
+                }
+                console.log(`Comic with ID ${comicId} deleted successfully`);
+                showModalNotification("Comic deleted successfully", 'success');
+
+                // Re-render the comics list after deletion
+                renderComics();
+            } catch (error) {
+                console.error('Error deleting comic:', error);
+                showModalNotification("Failed to delete comic", 'error');
+            }
+        }
+    
+        //--- Comics lists ---//
+        const comicsList = document.getElementById("comics-list");
+    
+        async function renderComics(searchTerm = '') {
+            const comicsData = await fetchComics(); // Fetch comics from the server
+            comicsList.innerHTML = ''; // Clear previous comics
+    
+            comicsData.forEach(comic => {
+            // Check if the comic title or author contains the search term (case insensitive)
+            if (comic.tentruyen.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                comic.tacgia.toLowerCase().includes(searchTerm.toLowerCase())) {
+                
+                const comicItem = `
+                    <div class="comic-item">
+                        <img src="${comic.hinhanh}" alt="${comic.tentruyen}" class="comic-thumbnail">
+                        <div class="comic-info" onclick="toEpisode('${comic.truyenid}')">
+                            <h4>${comic.tentruyen}</h4>
+                            <p>${comic.tacgia}</p>
+                        </div>
+                        <div class="comic-actions">
+                            <button class="edit-button">Edit</button>
+                            <button class="delete-button">Delete</button>
+                        </div>
+                    </div>
+                `;
+                comicsList.innerHTML += comicItem;
+                }
+            });
+        }
+    
+        renderComics();
+
+        // Search functionality
+        document.getElementById("search-btn").addEventListener("click", function() {
+            const searchTerm = document.getElementById("comic-search").value; // Get search input
+            renderComics(searchTerm); // Re-render comics with search term
+        });
+
+        // Add functionality
+        document.getElementById("saveComicButton").addEventListener("click", async function () {
+            const comicTitle = document.getElementById("comicTitle").value.trim();
+            const comicAuthor = document.getElementById("comicAuthor").value.trim();
+            const comicCategory = document.getElementById("comicCategory").value;
+            const comicStatus = document.getElementById("comicStatus").value.trim();
+            const comicDescription = document.getElementById("comicDescription").value.trim();
+            const comicImageInput = document.getElementById("comicImage");
+            const comicImageFile = comicImageInput.files[0];
+
+            if (!comicTitle || !comicAuthor || !comicCategory || !comicStatus || !comicDescription || !comicImageFile) {
+                showModalNotification("Please fill out all fields and select an image.", "error");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("comicTitle", comicTitle);
+            formData.append("comicAuthor", comicAuthor);
+            formData.append("comicCategory", comicCategory);
+            formData.append("comicStatus", comicStatus);
+            formData.append("comicDescription", comicDescription);
+            formData.append("comicFile", comicImageFile);
+
+            try {
+                const response = await fetch("/api/admin/add-comic", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showModalNotification("Comic uploaded successfully!", "success");
+                    document.getElementById("addComicModal").style.display = "none";
+                    renderComics(); // Refresh the comic list
+                } else {
+                    throw new Error(result.message || "Error adding comic.");
+                }
+            } catch (error) {
+                console.error("Error adding comic:", error);
+                showModalNotification("An error occurred while uploading the comic. Please try again.", "error");
+            }
+        });
+
+        // Delete functionality
+        document.getElementById("comics-list").addEventListener("click", async function(event) {
+            if (event.target.classList.contains("delete-button")) {
+                const comicItem = event.target.closest(".comic-item");
+                const comicIndex = Array.from(comicsList.children).indexOf(comicItem);
+
+                const comicsData = await fetchComics(); // Fetch comics data to get the current comic
+                const comic = comicsData[comicIndex]; // Get the corresponding comic data
+
+                // Confirm deletion with the user
+                const confirmDelete = confirm(`Are you sure you want to delete the comic: ${comic.tentruyen}?`);
+                if (confirmDelete) {
+                    await deleteComic(comic.truyenid); // Delete comic by ID
+                }
+            }
+        });
+
+        // Edit functionality
+        document.getElementById("saveEditComicButton").addEventListener("click", async function () {
+            const comicId = document.getElementById("editComicModal").dataset.comicId; // Retrieve comic ID
+            const comicTitle = document.getElementById("editComicTitle").value.trim();
+            const comicAuthor = document.getElementById("editComicAuthor").value.trim();
+            const comicCategory = document.getElementById("editComicCategory").value;
+            const comicStatus = document.getElementById("editComicStatus").value.trim();
+            const comicDescription = document.getElementById("editComicDescription").value.trim();
+            const comicImageInput = document.getElementById("editComicImage");
+            const comicImageFile = comicImageInput.files[0]; // Check if a new file is uploaded
+            const existingImagePath = document.getElementById("editImagePreview").src; // Current image path
+
+            if (!comicTitle || !comicAuthor || !comicCategory || !comicStatus || !comicDescription) {
+                showModalNotification("Please fill out all fields.", "error");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("comicTitle", comicTitle);
+            formData.append("comicAuthor", comicAuthor);
+            formData.append("comicCategory", comicCategory);
+            formData.append("comicStatus", comicStatus);
+            formData.append("comicDescription", comicDescription);
+            if (comicImageFile) {
+                formData.append("comicFile", comicImageFile); // Only append if a new file is uploaded
+            } else {
+                formData.append("existingImagePath", existingImagePath); // Use existing image
+            }
+
+            try {
+                const response = await fetch(`/api/comics/${comicId}`, {
+                    method: "PUT",
+                    body: formData,
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showModalNotification("Comic updated successfully!", "success");
+                    document.getElementById("editComicModal").style.display = "none";
+                    renderComics(); // Refresh the comic list
+                } else {
+                    throw new Error(result.message || "Error updating comic.");
+                }
+            } catch (error) {
+                console.error("Error updating comic:", error);
+                showModalNotification("An error occurred while updating the comic. Please try again.", "error");
+            }
+        });
+
+        // Modal functionality (Add)
+        const modal = document.getElementById("addComicModal");
+        const addComicButton = document.getElementById("addComicButton");
+        const closeModal = document.getElementsByClassName("close")[0];
+    
+        addComicButton.onclick = function() {
+            modal.style.display = "block";
+        }
+    
+        closeModal.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Modal functionality (Edit)
+        const editComicButtons = document.getElementsByClassName("edit-button");
+        const editModal = document.getElementById("editComicModal");
+        const closeEditModal = document.getElementsByClassName("close-edit")[0];
+
+        comicsList.addEventListener("click", async function (event) {
+            if (event.target.classList.contains("edit-button")) {
+                const comicItem = event.target.closest(".comic-item");
+                const comicIndex = Array.from(comicsList.children).indexOf(comicItem);
+
+                const comicsData = await fetchComics(); // Fetch comics data to get the current comic
+                const comic = comicsData[comicIndex]; // Get the corresponding comic data
+
+                await fetchGenresForEdit();
+
+                // Populate the edit modal with the comic details
+                document.getElementById("editComicTitle").value = comic.tentruyen;
+                document.getElementById("editComicAuthor").value = comic.tacgia;
+                
+                // Set the correct category in the <select>
+                const categorySelect = document.getElementById("editComicCategory");
+                Array.from(categorySelect.options).forEach(option => {
+                    if (String(option.value) === String(comic.iddanhmuc)) {
+                        option.selected = true; // Set the selected option
+                    }
+                });
+                
+                document.getElementById("editComicDescription").value = comic.mota;
+                
+                // Set the correct status in the <select>
+                const statusSelect = document.getElementById("editComicStatus");
+                Array.from(statusSelect.options).forEach(option => {
+                    // Check if the option value matches the comic status
+                    if (option.value === comic.trangthai) {
+                        option.selected = true; // Set the selected option
+                    }
+                });
+                
+                const editImagePreview = document.getElementById("editImagePreview");
+                editImagePreview.src = comic.hinhanh; // Set the image source
+                editImagePreview.style.display = "block";
+
+                // Store comic ID for later use when saving changes
+                editModal.dataset.comicId = comic.truyenid;
+
+                editModal.style.display = "block";
+            }
+        });
+
+        closeEditModal.onclick = function() {
+            editModal.style.display = "none";
+        };
+
+        // Drag and drop functionality for add modal
+        const dropArea = document.getElementById('dropArea');
+        const comicImageInput = document.getElementById('comicImage');
+
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('dragging');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragging');
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('dragging');
+            const file = event.dataTransfer.files[0];
+            comicImageInput.files = event.dataTransfer.files; // Assign the dropped file
+            validateImage({ target: { files: [file] } }); // Trigger validation and preview
+        });
+
+        // Drag and drop functionality for edit modal
+        const editDropArea = document.getElementById('editDropArea');
+        const editComicImageInput = document.getElementById('editComicImage');
+
+        editDropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            editDropArea.classList.add('dragging');
+        });
+
+        editDropArea.addEventListener('dragleave', () => {
+            editDropArea.classList.remove('dragging');
+        });
+
+        editDropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            editDropArea.classList.remove('dragging');
+            const file = event.dataTransfer.files[0];
+            editComicImageInput.files = event.dataTransfer.files; // Assign the dropped file
+            validateImageEdit({ target: { files: [file] } }); // Trigger validation and preview
+        });
+
+        // Logout
+        document.querySelector(".logout-button").addEventListener("click", function() {
+            window.location.href = "home.html"; // Redirect to home.html
+        });
+
+        // Directed to epidose.html
+        function toEpisode(comicId) {
+            window.location.href = `episode.html?comicId=${comicId}`;
+        }
+
+    </script>
+    
+</body>
+</html>
